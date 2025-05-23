@@ -94,8 +94,12 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 
 1. Push your code to GitHub
 2. Import the project in Vercel
-3. Add your environment variables in Vercel project settings
+3. Add environment variables in Vercel project settings:
+   - `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase anon key
 4. Deploy!
+
+**Important**: Never commit your `.env.local` file. Use Vercel's environment variables for production.
 
 ## Usage
 

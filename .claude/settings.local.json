@@ -5,7 +5,12 @@
       "Bash(npm install:*)",
       "Bash(mkdir:*)",
       "Bash(git add:*)",
-      "Bash(gh:*)"
+      "Bash(gh:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(ssh-add:*)",
+      "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/id_ed25519\" git push -u origin master)"
     ],
     "deny": []
   }

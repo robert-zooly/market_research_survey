@@ -185,7 +185,7 @@ export default function SurveyPage() {
         })
 
         // Add/update helper text
-        let helperText = options.htmlElement.querySelector('.selection-helper')
+        let helperText = options.htmlElement.querySelector('.selection-helper') as HTMLDivElement
         if (!helperText) {
           helperText = document.createElement('div')
           helperText.className = 'selection-helper'
