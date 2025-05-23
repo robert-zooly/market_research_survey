@@ -1,0 +1,109 @@
+{
+  "title": "Market Research Survey",
+  "description": "Help us understand your preferences",
+  "logoPosition": "right",
+  "pages": [
+    {
+      "name": "demographics",
+      "title": "About You",
+      "elements": [
+        {
+          "type": "text",
+          "name": "age",
+          "title": "What is your age?",
+          "inputType": "number",
+          "isRequired": true
+        },
+        {
+          "type": "dropdown",
+          "name": "gender",
+          "title": "Gender",
+          "choices": [
+            "Male",
+            "Female",
+            "Non-binary",
+            "Prefer not to say"
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "text",
+          "name": "location",
+          "title": "Where are you located? (City, State/Country)",
+          "isRequired": true
+        }
+      ]
+    },
+    {
+      "name": "preferences",
+      "title": "Your Preferences",
+      "elements": [
+        {
+          "type": "rating",
+          "name": "satisfaction",
+          "title": "How satisfied are you with current products in the market?",
+          "minRateDescription": "Very Unsatisfied",
+          "maxRateDescription": "Very Satisfied",
+          "isRequired": true
+        },
+        {
+          "type": "checkbox",
+          "name": "features",
+          "title": "Which features are most important to you?",
+          "choices": [
+            "Price",
+            "Quality",
+            "Brand reputation",
+            "Customer service",
+            "Innovation",
+            "Sustainability"
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "comment",
+          "name": "additional_comments",
+          "title": "Any additional comments or suggestions?",
+          "rows": 4
+        }
+      ]
+    },
+    {
+      "name": "contact",
+      "title": "Contact Information (Optional)",
+      "elements": [
+        {
+          "type": "html",
+          "name": "privacy_notice",
+          "html": "<p>Your contact information is optional and will only be used for follow-up questions about this survey.</p>"
+        },
+        {
+          "type": "text",
+          "name": "email",
+          "title": "Email Address",
+          "inputType": "email",
+          "validators": [
+            {
+              "type": "email"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "name": "name",
+          "title": "Full Name"
+        },
+        {
+          "type": "text",
+          "name": "address",
+          "title": "Address"
+        }
+      ]
+    }
+  ],
+  "showProgressBar": "top",
+  "progressBarType": "questions",
+  "showQuestionNumbers": "on",
+  "completeText": "Submit Survey",
+  "completedHtml": "<h3>Thank you for completing our survey!</h3><p>Your responses have been recorded.</p>"
+}

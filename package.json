@@ -1,0 +1,30 @@
+{
+  "name": "market_research_survey",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev -p 3003",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.8",
+    "next": "^15.1.8",
+    "papaparse": "^5.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "survey-core": "^2.0.10",
+    "survey-react-ui": "^2.0.10"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "@types/papaparse": "^5.3.16",
+    "@types/react": "^19.1.5",
+    "typescript": "^5.8.3"
+  }
+}

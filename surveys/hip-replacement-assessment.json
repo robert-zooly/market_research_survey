@@ -1,0 +1,399 @@
+{
+  "title": "Zooly Labs: Hip Replacement Innovation Assessment",
+  "description": "Transforming Orthopedic Surgery Through AI-Guided Precision",
+  "logoPosition": "right",
+  "pages": [
+    {
+      "name": "introduction",
+      "title": "Introduction",
+      "elements": [
+        {
+          "type": "html",
+          "name": "intro_text",
+          "html": "<p>Thank you for your interest in the future of orthopedic surgery. Zooly Labs has developed a revolutionary smart sensor that uses artificial intelligence to guide perfect hip component positioning based on each patient's unique anatomy.</p><p>Our technology addresses this critical challenge while simplifying your workflow during a total hip replacement.</p><p><strong>Complete this 3-minute assessment to:</strong></p><ul><li>Receive a personalized report on how Zooly's technology could benefit your practice</li><li>Get exclusive early access to our clinical validation data</li><li>Reserve your spot for a hands-on demonstration</li><li>Join our limited Surgeon Advisory Panel (qualified respondents only)</li></ul>"
+        }
+      ]
+    },
+    {
+      "name": "practice_profile",
+      "title": "Your Practice Profile",
+      "elements": [
+        {
+          "type": "radiogroup",
+          "name": "hip_replacements_monthly",
+          "title": "How many hip replacements do you perform monthly?",
+          "isRequired": true,
+          "choices": [
+            "1-5",
+            "6-10",
+            "11-20",
+            "Over 21"
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "primary_location",
+          "title": "Where do you primarily perform hip replacements?",
+          "isRequired": true,
+          "choices": [
+            "Hospital inpatient",
+            "Ambulatory Surgery Center (ASC)",
+            "Both"
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "surgical_approach",
+          "title": "Which approach do you typically use?",
+          "isRequired": true,
+          "choices": [
+            "Direct anterior",
+            "Posterior",
+            "Priformis sparing posterior",
+            "Anterolateral",
+            "Direct lateral",
+            "Direct superior",
+            "Supra-capular"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pain_points",
+      "title": "Pain Points Assessment",
+      "elements": [
+        {
+          "type": "matrix",
+          "name": "clinical_challenges",
+          "title": "What are your biggest clinical challenges with component positioning?",
+          "description": "Rate from 1 (Challenging) to 5 (Trivial)",
+          "isRequired": true,
+          "columns": [
+            { "value": 1, "text": "1 - Very Challenging" },
+            { "value": 2, "text": "2" },
+            { "value": 3, "text": "3" },
+            { "value": 4, "text": "4" },
+            { "value": 5, "text": "5 - Trivial" }
+          ],
+          "rows": [
+            { "value": "cup_anteversion", "text": "Achieving optimal cup anteversion/inclination" },
+            { "value": "anatomical_variations", "text": "Anatomical variations among patients" },
+            { "value": "minimally_invasive", "text": "Accuracy in minimally invasive approaches" },
+            { "value": "limited_visibility", "text": "Limited intraoperative visibility" },
+            { "value": "soft_tissue", "text": "Soft-tissue balancing and stability management" },
+            { "value": "bone_quality", "text": "Addressing unexpected bone quality/defects" },
+            { "value": "obesity_challenges", "text": "Overcoming obesity or muscular challenges" },
+            { "value": "component_stability", "text": "Component stability in complex cases" }
+          ]
+        },
+        {
+          "type": "comment",
+          "name": "clinical_challenges_other",
+          "title": "Other clinical challenges or comments:",
+          "rows": 3
+        },
+        {
+          "type": "checkbox",
+          "name": "technologies_used",
+          "title": "Have you used any of these technologies in your hip practice? (Select all that apply)",
+          "isRequired": true,
+          "choices": [
+            "Robotic assistance",
+            "Computer navigation",
+            "Patient-specific instrumentation",
+            "None of the above"
+          ]
+        },
+        {
+          "type": "rating",
+          "name": "technology_satisfaction",
+          "title": "If yes to any above, how satisfied were you?",
+          "description": "1 = Very Dissatisfied, 5 = Very Satisfied",
+          "visibleIf": "{technologies_used} notempty and {technologies_used} notcontains 'None of the above'",
+          "isRequired": true,
+          "rateMin": 1,
+          "rateMax": 5,
+          "minRateDescription": "Very Dissatisfied",
+          "maxRateDescription": "Very Satisfied"
+        },
+        {
+          "type": "comment",
+          "name": "technology_satisfaction_comments",
+          "title": "Please share any feedback about your experience with these technologies:",
+          "visibleIf": "{technologies_used} notempty and {technologies_used} notcontains 'None of the above'",
+          "rows": 3
+        },
+        {
+          "type": "radiogroup",
+          "name": "navigation_experience",
+          "title": "What has been your experience with navigation technologies in orthopedic surgery?",
+          "isRequired": true,
+          "choices": [
+            "Very positive",
+            "Somewhat positive",
+            "Neutral",
+            "Somewhat negative",
+            "Very negative",
+            "No experience"
+          ]
+        },
+        {
+          "type": "comment",
+          "name": "navigation_experience_comments",
+          "title": "Please share any comments about your navigation technology experience:",
+          "rows": 3
+        }
+      ]
+    },
+    {
+      "name": "research_context",
+      "title": "Research & Clinical Context",
+      "elements": [
+        {
+          "type": "html",
+          "name": "research_info",
+          "html": "<p><strong>According to research by Kenney et al. (2019), the percentage of revision total hip arthroplasty failures are due to:</strong></p><ul><li>Aseptic loosening: 23%</li><li>Instability: 23%</li><li>Infection: 22%</li></ul><p>Many of these failures are directly linked to component positioning accuracy.</p>"
+        },
+        {
+          "type": "radiogroup",
+          "name": "addressing_value",
+          "title": "Would addressing this issue be valuable to your practice?",
+          "isRequired": true,
+          "choices": [
+            "Extremely valuable",
+            "Very valuable",
+            "Somewhat valuable",
+            "Not very valuable",
+            "Not at all valuable"
+          ]
+        },
+        {
+          "type": "rating",
+          "name": "revision_importance",
+          "title": "Studies show the average cost of a revision is $51,290. How important is reducing revision rates to your practice?",
+          "isRequired": true,
+          "rateMin": 1,
+          "rateMax": 5,
+          "minRateDescription": "Not at all important",
+          "maxRateDescription": "Extremely important"
+        }
+      ]
+    },
+    {
+      "name": "solution_preview",
+      "title": "Zooly Solution Preview",
+      "elements": [
+        {
+          "type": "html",
+          "name": "solution_intro",
+          "html": "<h3>Introducing Zooly: Simple, Smart, Surgical Precision</h3><p>Our proprietary AI-driven sensor technology:</p><ul><li>Sets up in just 5 minutes</li><li>Provides accuracy and reliability for perfect component positioning</li><li>Works with your preferred implants and surgical approach</li><li>Reduces the need for pre-operative planning and imaging</li><li>Saves approximately $1,500 per case</li><li>Requires no capital equipment investment</li></ul><p><em>Unlike previous technologies, Zooly doesn't dictate your workflow—it enhances your expertise with precise, personalized guidance based on each patient's unique joint kinematics.</em></p>"
+        }
+      ]
+    },
+    {
+      "name": "value_assessment",
+      "title": "Value Assessment",
+      "elements": [
+        {
+          "type": "rating",
+          "name": "technology_value",
+          "title": "Based on what you've seen, how valuable would this technology be in your practice?",
+          "isRequired": true,
+          "rateMin": 1,
+          "rateMax": 5,
+          "minRateDescription": "Not at all valuable",
+          "maxRateDescription": "Extremely valuable"
+        },
+        {
+          "type": "checkbox",
+          "name": "compelling_benefits",
+          "title": "Which benefit is most compelling to you? (Select up to 2)",
+          "isRequired": true,
+          "validators": [
+            {
+              "type": "answercount",
+              "text": "Please select between 1 and 2 options",
+              "minCount": 1,
+              "maxCount": 2
+            }
+          ],
+          "choices": [
+            "Improved component positioning accuracy",
+            "Simplified workflow with 5-minute setup",
+            "Enhanced confidence during surgery",
+            "Reduced operative time",
+            "Cost savings per case",
+            "No capital investment required",
+            "Compatibility with my preferred implants"
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "financial_viability",
+          "title": "At $750 per case with potential for $1,200 reimbursement via CPT 20985, would this solution be financially viable for your practice?",
+          "isRequired": true,
+          "choices": [
+            "Yes, definitely",
+            "Likely",
+            "Unsure",
+            "Probably not",
+            "Definitely not"
+          ]
+        },
+        {
+          "type": "checkbox",
+          "name": "reservations",
+          "title": "What reservations, if any, would you have about implementing this technology?",
+          "isRequired": true,
+          "choices": [
+            "Clinical evidence",
+            "Integration with current workflow",
+            "Cost",
+            "Learning curve",
+            "Training and support"
+          ],
+          "hasOther": true,
+          "otherText": "Other (please specify)"
+        },
+        {
+          "type": "comment",
+          "name": "ideal_solution",
+          "title": "In your own words, what would the ideal component positioning solution look like for your practice?",
+          "isRequired": false,
+          "rows": 4
+        },
+        {
+          "type": "checkbox",
+          "name": "convincing_outcomes",
+          "title": "Which outcomes would most convince you to adopt a new positioning technology?",
+          "isRequired": true,
+          "choices": [
+            "More new patient visits",
+            "Faster surgery",
+            "Reduced revision rates",
+            "Improved patient-reported outcomes",
+            "Improved patient satisfaction",
+            "Lower dislocation risk",
+            "Enhanced practice reputation",
+            "Better clinical documentation"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "action_steps",
+      "title": "Action Steps",
+      "elements": [
+        {
+          "type": "checkbox",
+          "name": "next_steps",
+          "title": "I would like to: (Select all that apply)",
+          "isRequired": true,
+          "choices": [
+            "Schedule a virtual demonstration",
+            "Request a comparative analysis for my practice",
+            "Be contacted about participating in our clinical evaluation program",
+            "Learn more about becoming an early adopter",
+            "Join the Zooly Surgeon Advisory Panel",
+            "Receive updates on our clinical data and regulatory progress",
+            "Not interested at this time"
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "adoption_timeline",
+          "title": "When are you potentially interested in adopting new technology?",
+          "isRequired": true,
+          "choices": [
+            "Immediately",
+            "Within 3 months",
+            "Within 6 months",
+            "Within 1 year",
+            "Just exploring options"
+          ]
+        },
+        {
+          "type": "checkbox",
+          "name": "requirements_to_proceed",
+          "title": "What would you need to see to move forward with Zooly's technology? (Select all that apply)",
+          "isRequired": true,
+          "choices": [
+            "Clinical validation data",
+            "Live demonstration",
+            "Hands-on experience",
+            "Surgeon testimonials",
+            "Financial analysis for my practice"
+          ],
+          "hasOther": true,
+          "otherText": "Other (please specify)"
+        },
+        {
+          "type": "comment",
+          "name": "additional_comments",
+          "title": "Any additional comments or questions for our team?",
+          "rows": 4
+        }
+      ]
+    },
+    {
+      "name": "contact_information",
+      "title": "Contact Information",
+      "elements": [
+        {
+          "type": "text",
+          "name": "name",
+          "title": "Name",
+          "isRequired": true
+        },
+        {
+          "type": "text",
+          "name": "email",
+          "title": "Email",
+          "isRequired": true,
+          "inputType": "email",
+          "validators": [
+            {
+              "type": "email"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "name": "phone",
+          "title": "Phone",
+          "isRequired": true,
+          "inputType": "tel"
+        },
+        {
+          "type": "text",
+          "name": "practice_hospital",
+          "title": "Practice/Hospital",
+          "isRequired": true
+        },
+        {
+          "type": "text",
+          "name": "state",
+          "title": "State",
+          "isRequired": true
+        },
+        {
+          "type": "checkbox",
+          "name": "preferred_contact",
+          "title": "Preferred contact method",
+          "isRequired": true,
+          "choices": [
+            "Email",
+            "Phone",
+            "Text"
+          ]
+        }
+      ]
+    }
+  ],
+  "showProgressBar": "top",
+  "progressBarType": "pages",
+  "showQuestionNumbers": "on",
+  "completeText": "Submit Assessment",
+  "completedHtml": "<h3>Thank You & Next Steps</h3><p>Thank you for completing our assessment. Based on your responses, we'll provide:</p><ol style='padding-left: 1.5rem; margin: 1rem 0;'><li style='margin-bottom: 0.5rem;'>A personalized report on how Zooly could impact your practice</li><li style='margin-bottom: 0.5rem;'>Access to our latest clinical validation studies</li><li style='margin-bottom: 0.5rem;'>Information on our upcoming demonstration events</li></ol><p><strong>BONUS OFFER:</strong> The first 50 qualified respondents will receive a complimentary practice financial impact analysis ($2,500 value).</p><p>A member of our team will contact you within 24 hours to discuss your specific interests.</p><div style='margin-top: 2rem; text-align: center;'><button onclick='window.location.href=\"https://www.getzooly.com\"' style='padding: 0.75rem 1.5rem; background-color: #0070f3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem;'>Continue to Zooly Website</button></div>",
+  "showCompletedPage": true
+}
