@@ -138,7 +138,12 @@ export function getTimeUntilSend(scheduledTime: Date, now: Date = new Date()): s
   
   const hours = Math.floor(diff / (1000 * 60 * 60))
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+  const days = Math.floor(hours / 24)
   
+  if (days > 0) {
+    const remainingHours = hours % 24
+    return `${days}d ${remainingHours}h ${minutes}m`
+  }
   if (hours > 0) {
     return `${hours}h ${minutes}m`
   }

@@ -257,7 +257,7 @@ export default function BatchDetailsPage() {
             opacity: batch.sent_count === batch.total_count ? 0.6 : 1
           }}
         >
-          📅 Schedule by Timezone ({batch.total_count - batch.sent_count} pending)
+          📅 Schedule by Timezone (9 AM local time)
         </button>
 
         <button
@@ -273,7 +273,7 @@ export default function BatchDetailsPage() {
             opacity: sending || batch.sent_count === batch.total_count ? 0.6 : 1
           }}
         >
-          {sending ? 'Sending...' : `Send All Now (${batch.total_count - batch.sent_count} pending)`}
+          {sending ? 'Sending...' : `⚡ Send All Now (${batch.total_count - batch.sent_count} pending)`}
         </button>
 
         <button

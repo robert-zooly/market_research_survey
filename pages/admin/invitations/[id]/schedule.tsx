@@ -159,9 +159,14 @@ export default function ScheduleSendPage() {
         <p style={{ margin: '0 0 10px 0' }}>
           Emails will be sent at <strong>9:00 AM local time</strong> in each timezone.
         </p>
-        <p style={{ margin: 0 }}>
+        <p style={{ margin: '0 0 10px 0' }}>
           <strong>{totalPending} emails</strong> scheduled across {scheduledBatches.length} timezones
         </p>
+        {scheduledBatches.length > 0 && scheduledBatches[0].scheduledTime.getDate() !== now.getDate() && (
+          <p style={{ margin: 0, color: '#d32f2f' }}>
+            ⚠️ <strong>Note:</strong> Since it's past 9 AM in all timezones, emails are scheduled for tomorrow.
+          </p>
+        )}
       </div>
 
       {readyCount > 0 && (
@@ -195,7 +200,8 @@ export default function ScheduleSendPage() {
           <tr style={{ backgroundColor: '#f5f5f5' }}>
             <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Timezone</th>
             <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #ddd' }}>Recipients</th>
-            <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #ddd' }}>Local Send Time</th>
+            <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #ddd' }}>Scheduled Date</th>
+            <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #ddd' }}>Local Time</th>
             <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #ddd' }}>Time Until Send</th>
             <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #ddd' }}>Status</th>
             <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #ddd' }}>Action</th>
@@ -216,6 +222,13 @@ export default function ScheduleSendPage() {
                 </td>
                 <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #eee' }}>
                   {batch.invitations.length}
+                </td>
+                <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #eee' }}>
+                  {batch.scheduledTime.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    year: batch.scheduledTime.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+                  })}
                 </td>
                 <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #eee' }}>
                   9:00 AM
