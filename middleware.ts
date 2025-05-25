@@ -2,9 +2,8 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  // Only protect /admin routes
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    const basicAuth = request.headers.get('authorization')
+  // Only protect /admin routes (but not admin-login)
+  if (request.nextUrl.pathname.startsWith('/admin') && !request.nextUrl.pathname.startsWith('/admin-login')) {
     const adminPassword = process.env.ADMIN_PASSWORD
 
     if (!adminPassword) {
@@ -12,27 +11,31 @@ export function middleware(request: NextRequest) {
       return NextResponse.next()
     }
 
-    if (!basicAuth) {
-      return new Response('Authentication required', {
-        status: 401,
-        headers: {
-          'WWW-Authenticate': 'Basic realm="Admin Access"',
-        },
-      })
+    // Check for auth cookie
+    const authCookie = request.cookies.get('admin-auth')
+    
+    // Check for basic auth header (for API calls)
+    const basicAuth = request.headers.get('authorization')
+    
+    // Validate cookie
+    if (authCookie?.value === adminPassword) {
+      return NextResponse.next()
     }
-
-    const authValue = basicAuth.split(' ')[1]
-    const [user, pwd] = atob(authValue).split(':')
-
-    // Simple password check (username can be anything)
-    if (pwd !== adminPassword) {
-      return new Response('Invalid credentials', {
-        status: 401,
-        headers: {
-          'WWW-Authenticate': 'Basic realm="Admin Access"',
-        },
-      })
+    
+    // Validate basic auth
+    if (basicAuth) {
+      const authValue = basicAuth.split(' ')[1]
+      const [user, pwd] = atob(authValue).split(':')
+      
+      if (pwd === adminPassword) {
+        return NextResponse.next()
+      }
     }
+    
+    // No valid auth, redirect to login page
+    const loginUrl = new URL('/admin-login', request.url)
+    loginUrl.searchParams.set('from', request.nextUrl.pathname)
+    return NextResponse.redirect(loginUrl)
   }
 
   return NextResponse.next()

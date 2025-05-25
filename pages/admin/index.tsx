@@ -110,7 +110,22 @@ export default function AdminDashboard() {
 
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem' }}>
-      <h1>Admin Dashboard</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <h1 style={{ margin: 0 }}>Admin Dashboard</h1>
+        <a 
+          href="/api/admin-logout"
+          style={{ 
+            padding: '0.5rem 1rem',
+            backgroundColor: '#dc3545',
+            color: 'white',
+            textDecoration: 'none',
+            borderRadius: '4px',
+            fontSize: '14px'
+          }}
+        >
+          Logout
+        </a>
+      </div>
       
       <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem' }}>
         <Link 

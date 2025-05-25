@@ -9,16 +9,19 @@ export default function AdminLogin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Try to access admin with the password
-    const response = await fetch('/admin', {
+    // Verify password via API
+    const response = await fetch('/api/admin-auth', {
+      method: 'POST',
       headers: {
-        'Authorization': `Basic ${btoa(`admin:${password}`)}`
-      }
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password })
     })
 
     if (response.ok) {
-      // Password is correct, browser will remember it
-      window.location.href = '/admin'
+      // Get the redirect URL from query params
+      const from = new URLSearchParams(window.location.search).get('from') || '/admin'
+      window.location.href = from
     } else {
       setError(true)
     }
