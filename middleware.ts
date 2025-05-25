@@ -19,7 +19,11 @@ export function middleware(request: NextRequest) {
     
     // Validate cookie
     if (authCookie?.value === adminPassword) {
-      return NextResponse.next()
+      const response = NextResponse.next()
+      // Add no-cache headers for admin pages
+      response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate')
+      response.headers.set('Pragma', 'no-cache')
+      return response
     }
     
     // Validate basic auth

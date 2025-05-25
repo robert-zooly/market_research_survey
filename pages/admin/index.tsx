@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import { Survey } from '../../types/survey'
 import Papa from 'papaparse'
+import LogoutButton from '../../components/LogoutButton'
 
 export default function AdminDashboard() {
   const [surveys, setSurveys] = useState<Survey[]>([])
@@ -112,19 +113,7 @@ export default function AdminDashboard() {
     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h1 style={{ margin: 0 }}>Admin Dashboard</h1>
-        <a 
-          href="/api/admin-logout"
-          style={{ 
-            padding: '0.5rem 1rem',
-            backgroundColor: '#dc3545',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '4px',
-            fontSize: '14px'
-          }}
-        >
-          Logout
-        </a>
+        <LogoutButton />
       </div>
       
       <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem' }}>

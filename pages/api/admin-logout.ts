@@ -5,18 +5,19 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // Clear the auth cookie
+  // Clear the auth cookie by setting it to expire in the past
   const cookie = serialize('admin-auth', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 0, // Expire immediately
+    maxAge: -1,
+    expires: new Date(0),
     path: '/'
   })
 
   res.setHeader('Set-Cookie', cookie)
+  res.setHeader('Cache-Control', 'no-store')
   
-  // Redirect to login page
-  res.writeHead(302, { Location: '/admin-login' })
-  res.end()
+  // Send JSON response
+  res.status(200).json({ success: true })
 }
