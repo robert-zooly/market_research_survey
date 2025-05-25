@@ -38,13 +38,14 @@ const safeLocalStorage = {
 
 export default function SurveyPage() {
   const router = useRouter()
-  const { id } = router.query
+  const { id, token } = router.query
   const [surveyData, setSurveyData] = useState<SurveyType | null>(null)
   const [loading, setLoading] = useState(true)
   const [responseId, setResponseId] = useState<string | null>(null)
   const [lastSavedData, setLastSavedData] = useState<any>(null)
   const [lastPageIndex, setLastPageIndex] = useState<number>(0)
   const [isInitialized, setIsInitialized] = useState(false)
+  const [invitationData, setInvitationData] = useState<any>(null)
   const surveyRef = useRef<Model | null>(null)
 
   useEffect(() => {
@@ -52,6 +53,34 @@ export default function SurveyPage() {
       fetchSurvey(id as string)
     }
   }, [id])
+
+  useEffect(() => {
+    // Handle invitation token
+    if (token && typeof token === 'string') {
+      handleInvitationToken(token)
+    }
+  }, [token])
+
+  const handleInvitationToken = async (invitationToken: string) => {
+    try {
+      const { getInvitationByToken, markInvitationOpened } = await import('../../lib/invitations')
+      const invitation = await getInvitationByToken(invitationToken)
+      
+      if (invitation) {
+        setInvitationData({
+          token: invitationToken,
+          email: invitation.recipient_email,
+          name: invitation.recipient_name,
+          ...invitation.recipient_data
+        })
+        
+        // Mark as opened
+        await markInvitationOpened(invitationToken)
+      }
+    } catch (error) {
+      console.error('Error handling invitation token:', error)
+    }
+  }
 
   const fetchSurvey = async (surveyId: string) => {
     try {
@@ -192,6 +221,15 @@ export default function SurveyPage() {
     // Restore saved data if available
     if (lastSavedData) {
       survey.data = lastSavedData
+    } else if (invitationData) {
+      // Prepopulate from invitation data
+      survey.data = {
+        email: invitationData.email,
+        name: invitationData.name,
+        ...invitationData
+      }
+      // Store the invitation token for tracking
+      survey.data._invitation_token = invitationData.token
     }
 
     // Restore last page if available
@@ -201,6 +239,24 @@ export default function SurveyPage() {
 
     // Add custom behavior for checkbox questions with max selections
     survey.onAfterRenderQuestion.add((survey, options) => {
+      // Make prepopulated fields read-only if from invitation
+      if (invitationData && (options.question.name === 'email' || options.question.name === 'name')) {
+        const input = options.htmlElement.querySelector('input')
+        if (input) {
+          input.readOnly = true
+          input.style.backgroundColor = '#f5f5f5'
+          input.style.cursor = 'not-allowed'
+          
+          // Add helper text
+          const helper = document.createElement('div')
+          helper.style.fontSize = '0.75rem'
+          helper.style.color = '#666'
+          helper.style.marginTop = '0.25rem'
+          helper.textContent = 'This field has been prepopulated from your invitation'
+          options.htmlElement.appendChild(helper)
+        }
+      }
+      
     if (options.question.name === 'compelling_benefits') {
       const updateCheckboxState = () => {
         const checkedCount = options.question.value ? options.question.value.length : 0
@@ -294,7 +350,7 @@ export default function SurveyPage() {
 
     // Mark as initialized after first render
     setTimeout(() => setIsInitialized(true), 500)
-  }, [surveyData, id, savePartialResponse, onComplete]) // Include stable dependencies
+  }, [surveyData, id, savePartialResponse, onComplete, invitationData]) // Include stable dependencies
 
   if (loading) return <div>Loading survey...</div>
   if (!surveyData || !surveyRef.current) return <div>Survey not found</div>

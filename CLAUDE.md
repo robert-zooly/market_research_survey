@@ -74,3 +74,30 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 - Survey IDs in URLs use slugs derived from survey titles
 - Safari/iOS localStorage handling is implemented with error handling to prevent issues in Private Browsing mode
 - Survey progress is saved both locally (when available) and to the server (every 5 seconds)
+
+## Email Invitation System
+
+### Database Tables
+- `invitation_batches` - Tracks CSV uploads and overall statistics
+- `survey_invitations` - Individual invitations with tokens and status tracking
+- `email_events` - Email delivery events (sent, opened, clicked, etc.)
+
+### Key Features
+- Secure token-based invitations prevent tampering with prepopulated data
+- Automatic timezone detection based on US state
+- Batch sending by timezone (9am local time)
+- Prepopulated fields (email, name) are locked when accessed via invitation
+- Automatic follow-up reminders (day 3 and day 7)
+- Real-time tracking of sent, opened, and completed surveys
+
+### Email Setup
+Before sending emails, configure Mailgun:
+```bash
+# Add to .env.local
+NEXT_PUBLIC_MAILGUN_API_KEY=your_api_key
+NEXT_PUBLIC_MAILGUN_DOMAIN=your_domain.com
+```
+
+### CSV Format
+Required columns: `email`, `name` (optional), `state` (optional)
+Additional columns will be stored in `recipient_data` for custom use.

@@ -139,6 +139,19 @@ export default function AdminDashboard() {
         >
           Update Survey Template
         </Link>
+        <Link 
+          href="/admin/invitations"
+          style={{ 
+            display: 'inline-block',
+            padding: '0.75rem 1.5rem',
+            backgroundColor: '#9333ea',
+            color: 'white',
+            textDecoration: 'none',
+            borderRadius: '4px'
+          }}
+        >
+          Manage Invitations
+        </Link>
       </div>
 
       {loading ? (
