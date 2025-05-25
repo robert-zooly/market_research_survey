@@ -47,8 +47,11 @@ export function generateEmailTemplate(
     
     <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
     
-    <p style="font-size: 14px;">Thank you for your time,<br>
-    The Zooly Research Team</p>
+    <p style="font-size: 14px;">Best regards,</p>
+    
+    <p style="font-size: 14px; margin: 5px 0;"><strong>Derek Amanatullah</strong><br>
+    Associate Professor, Stanford Orthopedic Surgery<br>
+    Co-Founder, Zooly Labs</p>
     
     <p style="font-size: 12px; color: #999; margin-top: 20px;">
       P.S. This link is unique to you and will prepopulate your information.
@@ -71,8 +74,11 @@ Complete the survey here: ${surveyLink}
 
 The survey takes about 2 minutes and your responses will help shape future products in this space.
 
-Thank you for your time,
-The Zooly Research Team
+Best regards,
+
+Derek Amanatullah
+Associate Professor, Stanford Orthopedic Surgery
+Co-Founder, Zooly Labs
 
 P.S. This link is unique to you and will prepopulate your information.
 
@@ -102,8 +108,11 @@ Unsubscribe: ${surveyUrl}/unsubscribe?token=${invitation.token}`
       <a href="${surveyLink}" style="display: inline-block; background-color: #ffc107; color: #212529; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">Take Survey Now</a>
     </div>
     
-    <p style="font-size: 14px;">Thank you,<br>
-    The Zooly Research Team</p>
+    <p style="font-size: 14px;">Best regards,</p>
+    
+    <p style="font-size: 14px; margin: 5px 0;"><strong>Derek Amanatullah</strong><br>
+    Associate Professor, Stanford Orthopedic Surgery<br>
+    Co-Founder, Zooly Labs</p>
   </div>
 </body>
 </html>
@@ -117,8 +126,11 @@ It only takes 2 minutes and will help shape better solutions for patients.
 
 Take the survey: ${surveyLink}
 
-Thank you,
-The Zooly Research Team`
+Best regards,
+
+Derek Amanatullah
+Associate Professor, Stanford Orthopedic Surgery
+Co-Founder, Zooly Labs`
 
   } else {
     // Final reminder (day 7)
@@ -143,8 +155,11 @@ The Zooly Research Team`
       <a href="${surveyLink}" style="display: inline-block; background-color: #dc3545; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">Complete Survey Before It Closes</a>
     </div>
     
-    <p style="font-size: 14px;">Thank you,<br>
-    The Zooly Research Team</p>
+    <p style="font-size: 14px;">Best regards,</p>
+    
+    <p style="font-size: 14px; margin: 5px 0;"><strong>Derek Amanatullah</strong><br>
+    Associate Professor, Stanford Orthopedic Surgery<br>
+    Co-Founder, Zooly Labs</p>
   </div>
 </body>
 </html>
@@ -158,8 +173,11 @@ Just 2 minutes to help improve patient outcomes.
 
 Complete the survey: ${surveyLink}
 
-Thank you,
-The Zooly Research Team`
+Best regards,
+
+Derek Amanatullah
+Associate Professor, Stanford Orthopedic Surgery
+Co-Founder, Zooly Labs`
   }
 
   return { subject, html: bodyHtml, text: bodyText }

@@ -23,8 +23,9 @@ export default async function handler(
     
     // Create URLSearchParams for form data
     const formData = new URLSearchParams()
-    formData.append('from', `Zooly Research <research@${process.env.NEXT_PUBLIC_MAILGUN_DOMAIN}>`)
+    formData.append('from', `Dr. Derek F. Amanatullah <noreply@${process.env.NEXT_PUBLIC_MAILGUN_DOMAIN}>`)
     formData.append('to', invitation.recipient_email)
+    formData.append('h:Reply-To', 'research@getzooly.com')
     formData.append('subject', template.subject)
     formData.append('text', template.text)
     formData.append('html', template.html)
