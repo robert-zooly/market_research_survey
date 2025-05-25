@@ -23,17 +23,12 @@ export default function BatchDetailsPage() {
   }, [id])
 
   useEffect(() => {
-    // Initialize email service if config exists
-    const mailgunKey = process.env.NEXT_PUBLIC_MAILGUN_API_KEY
-    const mailgunDomain = process.env.NEXT_PUBLIC_MAILGUN_DOMAIN
-    
-    if (mailgunKey && mailgunDomain) {
-      setEmailService(new EmailService({
-        apiKey: mailgunKey,
-        domain: mailgunDomain,
-        from: 'research@getzooly.com'
-      }))
-    }
+    // Initialize email service
+    setEmailService(new EmailService({
+      apiKey: '', // Not needed for client-side
+      domain: '', // Not needed for client-side
+      from: 'research@getzooly.com'
+    }))
   }, [])
 
   const loadBatchDetails = async (batchId: string) => {
@@ -128,7 +123,7 @@ export default function BatchDetailsPage() {
 
   const handleSendEmails = async () => {
     if (!batch || !emailService || !survey) {
-      alert('Email service not configured. Please set up Mailgun credentials.')
+      alert('Email service not available.')
       return
     }
 

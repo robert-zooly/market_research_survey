@@ -180,14 +180,34 @@ export class EmailService {
   }
 
   async sendEmail(
-    to: string,
-    template: EmailTemplate,
-    invitationId: string
+    invitation: SurveyInvitation,
+    surveyUrl: string,
+    reminderNumber: number = 0
   ): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    // TODO: Implement Mailgun API call
-    // For now, return mock success
-    console.log(`Would send email to ${to} with subject: ${template.subject}`)
-    return { success: true, messageId: 'mock-message-id' }
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          invitation,
+          surveyUrl,
+          reminderNumber
+        })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        return { success: false, error: error.error || 'Failed to send email' }
+      }
+
+      const result = await response.json()
+      return { success: true, messageId: result.messageId }
+    } catch (error) {
+      console.error('Error sending email:', error)
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+    }
   }
 
   async sendBatch(
@@ -195,26 +215,24 @@ export class EmailService {
     surveyUrl: string,
     reminderNumber: number = 0
   ): Promise<void> {
-    // Send in batches of 50
-    const batchSize = 50
+    // Send in batches of 10 (reduced for API rate limits)
+    const batchSize = 10
     
     for (let i = 0; i < invitations.length; i += batchSize) {
       const batch = invitations.slice(i, i + batchSize)
       
       await Promise.all(
         batch.map(async (invitation) => {
-          const template = generateEmailTemplate(invitation, surveyUrl, reminderNumber)
-          await this.sendEmail(invitation.recipient_email, template, invitation.id)
-          
-          // Mark as sent
-          const { markInvitationSent } = await import('./invitations')
-          await markInvitationSent(invitation.id)
+          const result = await this.sendEmail(invitation, surveyUrl, reminderNumber)
+          if (!result.success) {
+            console.error(`Failed to send to ${invitation.recipient_email}:`, result.error)
+          }
         })
       )
       
-      // Small delay between batches
+      // Delay between batches to respect rate limits
       if (i + batchSize < invitations.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise(resolve => setTimeout(resolve, 2000))
       }
     }
   }
