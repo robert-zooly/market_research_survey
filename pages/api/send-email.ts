@@ -19,6 +19,8 @@ export default async function handler(
   try {
     const template = generateEmailTemplate(invitation, surveyUrl, reminderNumber)
     
+    console.log('Sending email to:', invitation.recipient_email)
+    
     // Create URLSearchParams for form data
     const formData = new URLSearchParams()
     formData.append('from', `Zooly Research <research@${process.env.NEXT_PUBLIC_MAILGUN_DOMAIN}>`)
@@ -51,10 +53,18 @@ export default async function handler(
     }
 
     const result = await response.json()
+    console.log('Mailgun response:', result)
     
-    // Mark invitation as sent
-    const { markInvitationSent } = await import('../../lib/invitations')
-    await markInvitationSent(invitation.id)
+    // Only mark invitation as sent if it's not a test
+    if (invitation.id !== 'test-id') {
+      try {
+        const { markInvitationSent } = await import('../../lib/invitations')
+        await markInvitationSent(invitation.id)
+      } catch (error) {
+        console.warn('Could not mark invitation as sent:', error)
+        // Don't fail the whole request if this fails
+      }
+    }
     
     return res.status(200).json({ success: true, messageId: result.id })
   } catch (error) {
