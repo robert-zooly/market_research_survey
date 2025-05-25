@@ -18,8 +18,10 @@ export default function handler(
   }
 
   if (password === adminPassword) {
-    // Set auth cookie
-    const cookie = serialize('admin-auth', adminPassword, {
+    // Set auth cookie with a simple token instead of the password
+    const authToken = Buffer.from(`authed:${Date.now()}`).toString('base64')
+    
+    const cookie = serialize('admin-auth', authToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

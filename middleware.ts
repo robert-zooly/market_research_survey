@@ -17,8 +17,8 @@ export function middleware(request: NextRequest) {
     // Check for basic auth header (for API calls)
     const basicAuth = request.headers.get('authorization')
     
-    // Validate cookie
-    if (authCookie?.value === adminPassword) {
+    // Validate cookie - check if it's a valid auth token
+    if (authCookie?.value && authCookie.value.startsWith('YXV0aGVk')) { // 'authed' in base64
       const response = NextResponse.next()
       // Add no-cache headers for admin pages
       response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate')
@@ -29,7 +29,7 @@ export function middleware(request: NextRequest) {
     // Validate basic auth
     if (basicAuth) {
       const authValue = basicAuth.split(' ')[1]
-      const [user, pwd] = atob(authValue).split(':')
+      const [, pwd] = atob(authValue).split(':')
       
       if (pwd === adminPassword) {
         return NextResponse.next()
