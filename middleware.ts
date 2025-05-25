@@ -7,16 +7,12 @@ export function middleware(request: NextRequest) {
     // Check for auth cookie
     const authCookie = request.cookies.get('admin-auth')
     
-    console.log('Middleware check - path:', request.nextUrl.pathname)
-    console.log('Auth cookie value:', authCookie?.value)
-    
     // If we have an auth cookie with the correct prefix, allow access
     if (authCookie?.value && authCookie.value.startsWith('YXV0aGVk')) {
       return NextResponse.next()
     }
     
     // No valid auth, redirect to login page
-    console.log('No valid auth, redirecting to login')
     const loginUrl = new URL('/admin-login', request.url)
     loginUrl.searchParams.set('from', request.nextUrl.pathname)
     return NextResponse.redirect(loginUrl)
