@@ -8,7 +8,7 @@ export default function handler(
   // Clear the auth cookie by setting it to expire in the past
   const cookie = serialize('admin-auth', '', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: false, // Allow cookies in development
     sameSite: 'lax',
     maxAge: -1,
     expires: new Date(0),
