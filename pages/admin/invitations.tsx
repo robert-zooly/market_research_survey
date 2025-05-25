@@ -34,9 +34,8 @@ export default function InvitationsPage() {
     try {
       const { data, error } = await supabase
         .from('surveys')
-        .select('id, title')
-        .eq('is_active', true)
-        .order('title')
+        .select('id, name')
+        .order('name')
 
       if (error) throw error
       setSurveys(data || [])
@@ -178,7 +177,7 @@ export default function InvitationsPage() {
               <option value="">-- Select a survey --</option>
               {surveys.map(survey => (
                 <option key={survey.id} value={survey.id}>
-                  {survey.title}
+                  {survey.name}
                 </option>
               ))}
             </select>

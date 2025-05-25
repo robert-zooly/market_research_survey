@@ -30,13 +30,13 @@ CREATE TABLE IF NOT EXISTS survey_invitations (
   completed_at TIMESTAMP WITH TIME ZONE,
   reminder_count INTEGER DEFAULT 0,
   last_reminder_at TIMESTAMP WITH TIME ZONE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  
-  -- Index for fast token lookup
-  INDEX idx_token (token),
-  INDEX idx_email (recipient_email),
-  INDEX idx_batch_status (batch_id, sent_at, completed_at)
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Create indexes for survey_invitations
+CREATE INDEX IF NOT EXISTS idx_token ON survey_invitations(token);
+CREATE INDEX IF NOT EXISTS idx_email ON survey_invitations(recipient_email);
+CREATE INDEX IF NOT EXISTS idx_batch_status ON survey_invitations(batch_id, sent_at, completed_at);
 
 -- Create email tracking table
 CREATE TABLE IF NOT EXISTS email_events (
@@ -44,10 +44,11 @@ CREATE TABLE IF NOT EXISTS email_events (
   invitation_id UUID REFERENCES survey_invitations(id) ON DELETE CASCADE,
   event_type VARCHAR(50) NOT NULL, -- 'sent', 'opened', 'clicked', 'bounced', 'complained'
   event_data JSONB,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  
-  INDEX idx_invitation_events (invitation_id, event_type)
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Create index for email_events
+CREATE INDEX IF NOT EXISTS idx_invitation_events ON email_events(invitation_id, event_type);
 
 -- Function to update batch statistics
 CREATE OR REPLACE FUNCTION update_batch_stats(batch_uuid UUID)
