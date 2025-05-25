@@ -213,7 +213,21 @@ export default function SurveyPage() {
 
   // Create survey model only once
   useEffect(() => {
-    if (!surveyData || surveyRef.current) return
+    if (!surveyData) return
+
+    // If survey already exists and we just got invitation data, update it
+    if (surveyRef.current && invitationData && !lastSavedData) {
+      surveyRef.current.data = {
+        email: invitationData.email,
+        name: invitationData.name,
+        ...invitationData,
+        _invitation_token: invitationData.token
+      }
+      return
+    }
+
+    // Don't recreate if already exists
+    if (surveyRef.current) return
 
     const survey = new Model(surveyData.json_schema)
     surveyRef.current = survey

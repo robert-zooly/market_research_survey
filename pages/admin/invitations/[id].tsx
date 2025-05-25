@@ -211,6 +211,23 @@ export default function BatchDetailsPage() {
         ← Back to Batches
       </button>
 
+      {/* Refresh Button */}
+      <div style={{ marginBottom: '20px', textAlign: 'right' }}>
+        <button
+          onClick={() => loadBatchDetails(batch.id)}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#f5f5f5',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          🔄 Refresh Stats
+        </button>
+      </div>
+
       {/* Batch Summary */}
       <div style={{ 
         display: 'grid', 

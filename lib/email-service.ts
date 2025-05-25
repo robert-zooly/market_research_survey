@@ -60,7 +60,7 @@ export function generateEmailTemplate(
   
   <div style="font-size: 11px; color: #999; text-align: center; margin-top: 30px;">
     <p>You're receiving this because you're a healthcare professional in our network.<br>
-    <a href="${surveyUrl}/unsubscribe?token=${invitation.token}" style="color: #999;">Unsubscribe</a></p>
+    <a href="${surveyUrl.replace(/\/survey\/[^\/]+/, '')}/unsubscribe?token=${invitation.token}" style="color: #999;">Unsubscribe</a></p>
   </div>
 </body>
 </html>
@@ -83,7 +83,7 @@ Co-Founder, Zooly Labs
 P.S. This link is unique to you and will prepopulate your information.
 
 ---
-Unsubscribe: ${surveyUrl}/unsubscribe?token=${invitation.token}`
+Unsubscribe: ${surveyUrl.replace(/\/survey\/[^\/]+/, '')}/unsubscribe?token=${invitation.token}`
 
   } else if (reminderNumber === 1) {
     // First reminder (day 3)
