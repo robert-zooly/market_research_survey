@@ -1,4 +1,4 @@
-import { SurveyInvitation, TimezoneGroup } from '../types/invitation'
+import { SurveyInvitation } from '../types/invitation'
 
 interface ScheduledBatch {
   timezone: string
@@ -10,53 +10,31 @@ interface ScheduledBatch {
 
 // Get the next occurrence of 9am in a given timezone
 export function getNext9amInTimezone(timezone: string, now: Date = new Date()): Date {
-  // Get current time in the target timezone
-  const formatter = new Intl.DateTimeFormat('en-US', {
-    timeZone: timezone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  })
+  // Get current hour in the target timezone
+  const currentHour = parseInt(now.toLocaleString('en-US', { 
+    timeZone: timezone, 
+    hour: 'numeric', 
+    hour12: false 
+  }))
   
-  const parts = formatter.formatToParts(now)
-  const current = {
-    year: parseInt(parts.find(p => p.type === 'year')?.value || '0'),
-    month: parseInt(parts.find(p => p.type === 'month')?.value || '0'),
-    day: parseInt(parts.find(p => p.type === 'day')?.value || '0'),
-    hour: parseInt(parts.find(p => p.type === 'hour')?.value || '0'),
-    minute: parseInt(parts.find(p => p.type === 'minute')?.value || '0')
+  // Calculate how many hours until 9am
+  let hoursUntil9am: number
+  
+  if (currentHour < 9) {
+    // It's before 9am today
+    hoursUntil9am = 9 - currentHour
+  } else {
+    // It's after 9am today, so target tomorrow 9am
+    hoursUntil9am = (24 - currentHour) + 9
   }
   
-  // Create a date for 9am in the target timezone
-  let target9am = new Date(now)
+  // Add the hours to current time
+  const targetTime = new Date(now.getTime() + (hoursUntil9am * 60 * 60 * 1000))
   
-  // If it's already past 9am in that timezone, schedule for tomorrow
-  if (current.hour >= 9) {
-    target9am.setDate(target9am.getDate() + 1)
-  }
+  // Round to exact hour (9:00:00)
+  targetTime.setMinutes(0, 0, 0)
   
-  // Set to 9am in the target timezone
-  const targetFormatter = new Intl.DateTimeFormat('en-US', {
-    timeZone: timezone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  })
-  
-  const targetParts = targetFormatter.formatToParts(target9am)
-  const targetDate = `${targetParts.find(p => p.type === 'year')?.value}-${targetParts.find(p => p.type === 'month')?.value}-${targetParts.find(p => p.type === 'day')?.value}T09:00:00`
-  
-  // Convert back to UTC
-  const utcDate = new Date(new Date(targetDate).toLocaleString('en-US', { timeZone: 'UTC' }))
-  
-  // Adjust for timezone offset
-  const offset = getTimezoneOffsetHours(timezone)
-  utcDate.setHours(utcDate.getHours() - offset)
-  
-  return utcDate
+  return targetTime
 }
 
 // Get timezone offset in hours from UTC
