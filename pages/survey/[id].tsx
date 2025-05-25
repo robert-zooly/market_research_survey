@@ -6,6 +6,36 @@ import 'survey-core/survey-core.css'
 import { supabase } from '../../lib/supabase'
 import { Survey as SurveyType } from '../../types/survey'
 
+// Helper function for safe localStorage operations (Safari/iOS compatibility)
+const safeLocalStorage = {
+  setItem: (key: string, value: string) => {
+    try {
+      localStorage.setItem(key, value)
+      return true
+    } catch (e) {
+      console.warn('localStorage.setItem failed:', e)
+      return false
+    }
+  },
+  getItem: (key: string): string | null => {
+    try {
+      return localStorage.getItem(key)
+    } catch (e) {
+      console.warn('localStorage.getItem failed:', e)
+      return null
+    }
+  },
+  removeItem: (key: string) => {
+    try {
+      localStorage.removeItem(key)
+      return true
+    } catch (e) {
+      console.warn('localStorage.removeItem failed:', e)
+      return false
+    }
+  }
+}
+
 export default function SurveyPage() {
   const router = useRouter()
   const { id } = router.query
@@ -34,13 +64,17 @@ export default function SurveyPage() {
       if (error) throw error
       setSurveyData(data)
 
-      // Load saved data from localStorage
-      const savedData = localStorage.getItem(`survey_${surveyId}_data`)
-      const savedResponseId = localStorage.getItem(`survey_${surveyId}_response_id`)
-      const savedPageIndex = localStorage.getItem(`survey_${surveyId}_page`)
+      // Load saved data from localStorage with Safari/iOS compatibility
+      const savedData = safeLocalStorage.getItem(`survey_${surveyId}_data`)
+      const savedResponseId = safeLocalStorage.getItem(`survey_${surveyId}_response_id`)
+      const savedPageIndex = safeLocalStorage.getItem(`survey_${surveyId}_page`)
       
       if (savedData) {
-        setLastSavedData(JSON.parse(savedData))
+        try {
+          setLastSavedData(JSON.parse(savedData))
+        } catch (e) {
+          console.warn('Failed to parse saved data:', e)
+        }
       }
       if (savedResponseId) {
         setResponseId(savedResponseId)
@@ -93,7 +127,7 @@ export default function SurveyPage() {
         if (error) throw error
         if (newResponse) {
           setResponseId(newResponse.id)
-          localStorage.setItem(`survey_${id}_response_id`, newResponse.id)
+          safeLocalStorage.setItem(`survey_${id}_response_id`, newResponse.id)
         }
       }
     } catch (error) {
@@ -137,9 +171,9 @@ export default function SurveyPage() {
       }
 
       // Clear local storage
-      localStorage.removeItem(`survey_${id}_data`)
-      localStorage.removeItem(`survey_${id}_response_id`)
-      localStorage.removeItem(`survey_${id}_page`)
+      safeLocalStorage.removeItem(`survey_${id}_data`)
+      safeLocalStorage.removeItem(`survey_${id}_response_id`)
+      safeLocalStorage.removeItem(`survey_${id}_page`)
       
       // Don't redirect - let the survey show its completion page
     } catch (error) {
@@ -222,7 +256,7 @@ export default function SurveyPage() {
       const currentData = sender.data
       
       // Save to localStorage
-      localStorage.setItem(`survey_${id}_data`, JSON.stringify(currentData))
+      safeLocalStorage.setItem(`survey_${id}_data`, JSON.stringify(currentData))
       
       // Debounced save to database (every 5 seconds of changes)
       if (survey.onValueChanged.hasOwnProperty('timeoutId')) {
@@ -247,8 +281,8 @@ export default function SurveyPage() {
       const currentData = sender.data
       const currentPageIndex = sender.currentPageNo
       
-      localStorage.setItem(`survey_${id}_data`, JSON.stringify(currentData))
-      localStorage.setItem(`survey_${id}_page`, currentPageIndex.toString())
+      safeLocalStorage.setItem(`survey_${id}_data`, JSON.stringify(currentData))
+      safeLocalStorage.setItem(`survey_${id}_page`, currentPageIndex.toString())
       
       // Only save to database if we have actual data
       if (currentData && Object.keys(currentData).length > 0) {
