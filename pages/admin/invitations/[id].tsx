@@ -245,6 +245,22 @@ export default function BatchDetailsPage() {
       {/* Actions */}
       <div style={{ marginBottom: '30px', display: 'flex', gap: '10px' }}>
         <button
+          onClick={() => router.push(`/admin/invitations/${batch.id}/schedule`)}
+          disabled={batch.sent_count === batch.total_count}
+          style={{
+            backgroundColor: '#2196f3',
+            color: 'white',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: batch.sent_count === batch.total_count ? 'not-allowed' : 'pointer',
+            opacity: batch.sent_count === batch.total_count ? 0.6 : 1
+          }}
+        >
+          📅 Schedule by Timezone ({batch.total_count - batch.sent_count} pending)
+        </button>
+
+        <button
           onClick={handleSendEmails}
           disabled={sending || batch.sent_count === batch.total_count}
           style={{
@@ -257,7 +273,7 @@ export default function BatchDetailsPage() {
             opacity: sending || batch.sent_count === batch.total_count ? 0.6 : 1
           }}
         >
-          {sending ? 'Sending...' : `Send Initial Emails (${batch.total_count - batch.sent_count} pending)`}
+          {sending ? 'Sending...' : `Send All Now (${batch.total_count - batch.sent_count} pending)`}
         </button>
 
         <button
