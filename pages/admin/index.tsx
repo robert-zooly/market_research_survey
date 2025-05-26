@@ -173,7 +173,18 @@ export default function AdminDashboard() {
           <tbody>
             {surveys.map(survey => (
               <tr key={survey.id} style={{ borderBottom: '1px solid #eee' }}>
-                <td style={{ padding: '0.75rem' }}>{survey.name}</td>
+                <td style={{ padding: '0.75rem' }}>
+                  <Link
+                    href={`/survey/${survey.id}`}
+                    target="_blank"
+                    style={{ 
+                      color: '#0070f3',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    {survey.name}
+                  </Link>
+                </td>
                 <td style={{ padding: '0.75rem' }}>
                   <span style={{ 
                     padding: '0.25rem 0.5rem',
@@ -189,6 +200,22 @@ export default function AdminDashboard() {
                   {new Date(survey.created_at).toLocaleDateString()}
                 </td>
                 <td style={{ padding: '0.75rem' }}>
+                  <Link
+                    href={`/survey/${survey.id}`}
+                    target="_blank"
+                    style={{ 
+                      marginRight: '0.5rem',
+                      padding: '0.25rem 0.75rem',
+                      border: '1px solid #0070f3',
+                      borderRadius: '4px',
+                      backgroundColor: 'white',
+                      color: '#0070f3',
+                      textDecoration: 'none',
+                      display: 'inline-block'
+                    }}
+                  >
+                    View Survey
+                  </Link>
                   <button
                     onClick={() => toggleSurveyStatus(survey.id, survey.is_active)}
                     style={{ 
