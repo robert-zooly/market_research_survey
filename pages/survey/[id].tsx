@@ -92,6 +92,10 @@ export default function SurveyPage() {
 
       if (error) throw error
       setSurveyData(data)
+      
+      // Create survey model immediately
+      const survey = new Model(data.json_schema)
+      surveyRef.current = survey
 
       // Load saved data from localStorage with Safari/iOS compatibility
       const savedData = safeLocalStorage.getItem(`survey_${surveyId}_data`)
@@ -100,7 +104,9 @@ export default function SurveyPage() {
       
       if (savedData) {
         try {
-          setLastSavedData(JSON.parse(savedData))
+          const parsedData = JSON.parse(savedData)
+          setLastSavedData(parsedData)
+          survey.data = parsedData
         } catch (e) {
           console.warn('Failed to parse saved data:', e)
         }
@@ -109,14 +115,18 @@ export default function SurveyPage() {
         setResponseId(savedResponseId)
       }
       if (savedPageIndex) {
-        setLastPageIndex(parseInt(savedPageIndex))
+        const pageIndex = parseInt(savedPageIndex)
+        setLastPageIndex(pageIndex)
+        survey.currentPageNo = pageIndex
       }
+      
+      // Only set loading to false after successful data fetch and survey creation
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching survey:', error)
+      // Keep loading true during redirect to prevent flash
       alert('Survey not found')
       router.push('/')
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -211,44 +221,20 @@ export default function SurveyPage() {
     }
   }, [id, responseId, router])
 
-  // Create survey model only once
+  // Set up survey behaviors and invitation data
   useEffect(() => {
-    if (!surveyData) return
+    if (!surveyData || !surveyRef.current) return
 
-    // If survey already exists and we just got invitation data, update it
-    if (surveyRef.current && invitationData && !lastSavedData) {
-      surveyRef.current.data = {
+    const survey = surveyRef.current
+
+    // Handle invitation data
+    if (invitationData && !lastSavedData) {
+      survey.data = {
         email: invitationData.email,
         name: invitationData.name,
         ...invitationData,
         _invitation_token: invitationData.token
       }
-      return
-    }
-
-    // Don't recreate if already exists
-    if (surveyRef.current) return
-
-    const survey = new Model(surveyData.json_schema)
-    surveyRef.current = survey
-
-    // Restore saved data if available
-    if (lastSavedData) {
-      survey.data = lastSavedData
-    } else if (invitationData) {
-      // Prepopulate from invitation data
-      survey.data = {
-        email: invitationData.email,
-        name: invitationData.name,
-        ...invitationData
-      }
-      // Store the invitation token for tracking
-      survey.data._invitation_token = invitationData.token
-    }
-
-    // Restore last page if available
-    if (lastPageIndex > 0) {
-      survey.currentPageNo = lastPageIndex
     }
 
     // Add custom behavior for checkbox questions with max selections
@@ -366,8 +352,20 @@ export default function SurveyPage() {
     setTimeout(() => setIsInitialized(true), 500)
   }, [surveyData, id, savePartialResponse, onComplete, invitationData]) // Include stable dependencies
 
-  if (loading) return <div>Loading survey...</div>
-  if (!surveyData || !surveyRef.current) return <div>Survey not found</div>
+  if (loading || !surveyData || !surveyRef.current) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        fontSize: '18px',
+        color: '#666'
+      }}>
+        {loading ? 'Loading survey...' : 'Survey not found. Please check the URL and try again.'}
+      </div>
+    )
+  }
 
   return (
     <div style={{ minHeight: '100vh' }}>

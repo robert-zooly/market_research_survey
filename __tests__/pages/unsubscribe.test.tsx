@@ -79,7 +79,10 @@ describe('UnsubscribePage', () => {
       expect(mockFetch).toHaveBeenCalled()
     })
 
-    expect(screen.getByText('Unsubscribe Failed')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('Unsubscribe Failed')).toBeInTheDocument()
+    })
+    
     expect(screen.getByText('We couldn\'t process your request. Please try again or contact support.')).toBeInTheDocument()
     expect(screen.getByText('Email: research@getzooly.com')).toBeInTheDocument()
   })
@@ -98,7 +101,10 @@ describe('UnsubscribePage', () => {
       expect(mockFetch).toHaveBeenCalled()
     })
 
-    expect(screen.getByText('Unsubscribe Failed')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('Unsubscribe Failed')).toBeInTheDocument()
+    })
+    
     expect(consoleSpy).toHaveBeenCalledWith('Error unsubscribing:', expect.any(Error))
 
     consoleSpy.mockRestore()
@@ -150,6 +156,10 @@ describe('UnsubscribePage', () => {
     render(<UnsubscribePage />)
 
     await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalled()
+    })
+
+    await waitFor(() => {
       const heading = screen.getByText('Unsubscribed Successfully')
       expect(heading).toHaveStyle({ color: '#4caf50' })
     })
@@ -165,6 +175,10 @@ describe('UnsubscribePage', () => {
     mockRouter.query = { token: 'test-token' }
     
     render(<UnsubscribePage />)
+
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalled()
+    })
 
     await waitFor(() => {
       const heading = screen.getByText('Unsubscribe Failed')

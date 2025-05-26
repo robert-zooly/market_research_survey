@@ -25,21 +25,22 @@ describe('invitations', () => {
     jest.clearAllMocks()
     
     // Setup default mock chain
-    const mockChain = {
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      in: jest.fn().mockReturnThis(),
-      is: jest.fn().mockReturnThis(),
-      not: jest.fn().mockReturnThis(),
-      lte: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis(),
-      single: jest.fn().mockReturnThis(),
-      limit: jest.fn().mockReturnThis(),
+    const createMockChain = () => {
+      const chain: any = {}
+      const methods = ['insert', 'update', 'select', 'eq', 'in', 'is', 'not', 'lte', 'order', 'single', 'limit']
+      
+      methods.forEach(method => {
+        chain[method] = jest.fn(() => chain)
+      })
+      
+      // Default return for terminal operations
+      chain.data = null
+      chain.error = null
+      
+      return chain
     }
     
-    mockSupabase.from.mockReturnValue(mockChain as any)
+    mockSupabase.from.mockImplementation(() => createMockChain())
     mockSupabase.rpc.mockResolvedValue({ data: null, error: null } as any)
   })
 

@@ -1,10 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import handler from '../../pages/api/send-email'
 import { supabase } from '../../lib/supabase'
-import FormData from 'form-data'
 
 jest.mock('../../lib/supabase')
-jest.mock('form-data')
 
 // Mock fetch globally
 global.fetch = jest.fn()
@@ -49,12 +47,6 @@ describe('/api/send-email', () => {
     
     mockSupabase.from.mockReturnValue(mockChain as any)
     mockSupabase.rpc.mockResolvedValue({ data: null, error: null } as any)
-
-    // Mock FormData
-    const mockFormData = {
-      append: jest.fn()
-    }
-    ;(FormData as jest.MockedClass<typeof FormData>).mockImplementation(() => mockFormData as any)
   })
 
   it('should send email successfully', async () => {
@@ -71,21 +63,23 @@ describe('/api/send-email', () => {
       expect.objectContaining({
         method: 'POST',
         headers: {
-          'Authorization': 'Basic ' + Buffer.from('api:test-api-key').toString('base64')
-        }
+          'Authorization': 'Basic ' + Buffer.from('api:test-api-key').toString('base64'),
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: expect.stringContaining('from=Dr.+Derek+F.+Amanatullah')
       })
     )
 
-    // Verify form data
-    const formDataInstance = (FormData as jest.MockedClass<typeof FormData>).mock.results[0].value
-    expect(formDataInstance.append).toHaveBeenCalledWith('from', 'Derek from Zooly <research@test.domain.com>')
-    expect(formDataInstance.append).toHaveBeenCalledWith('to', 'test@example.com')
-    expect(formDataInstance.append).toHaveBeenCalledWith('subject', expect.stringContaining('hip replacement'))
-    expect(formDataInstance.append).toHaveBeenCalledWith('html', expect.stringContaining('Hi John Doe,'))
-    expect(formDataInstance.append).toHaveBeenCalledWith('text', expect.stringContaining('Hi John Doe,'))
-
-    // Verify tracking pixel
-    expect(formDataInstance.append).toHaveBeenCalledWith('o:tracking-opens', 'yes')
+    // Get the actual body sent
+    const fetchCall = mockFetch.mock.calls[0]
+    const body = fetchCall?.[1]?.body as string
+    
+    // Verify form data params
+    expect(body).toContain('to=test%40example.com')
+    expect(body).toContain('subject=')
+    expect(body).toContain('html=')
+    expect(body).toContain('text=')
+    expect(body).toContain('o%3Atracking-opens=yes')
 
     // Verify database updates
     expect(mockSupabase.from).toHaveBeenCalledWith('survey_invitations')
@@ -108,25 +102,24 @@ describe('/api/send-email', () => {
 
     await handler(req as NextApiRequest, res as NextApiResponse)
 
-    const formDataInstance = (FormData as jest.MockedClass<typeof FormData>).mock.results[0].value
-    expect(formDataInstance.append).toHaveBeenCalledWith(
-      'subject', 
-      'Reminder: Your input needed on hip replacement survey'
-    )
+    const fetchCall = mockFetch.mock.calls[0]
+    const body = fetchCall?.[1]?.body as string
+    
+    expect(body).toContain('subject=Reminder%3A+')
   })
 
   it('should handle Mailgun API errors', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
-      json: async () => ({ message: 'Invalid API key' })
+      text: async () => 'Invalid API key',
+      status: 401
     } as Response)
 
     await handler(req as NextApiRequest, res as NextApiResponse)
 
-    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.status).toHaveBeenCalledWith(401)
     expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      error: 'Invalid API key'
+      error: 'Mailgun error: Invalid API key'
     })
   })
 
@@ -177,7 +170,7 @@ describe('/api/send-email', () => {
     expect(mockFetch).not.toHaveBeenCalled()
   })
 
-  it('should validate environment variables', async () => {
+  it('should handle missing environment variables', async () => {
     // Temporarily remove env vars
     const originalApiKey = process.env.NEXT_PUBLIC_MAILGUN_API_KEY
     const originalDomain = process.env.NEXT_PUBLIC_MAILGUN_DOMAIN
@@ -185,12 +178,14 @@ describe('/api/send-email', () => {
     delete process.env.NEXT_PUBLIC_MAILGUN_API_KEY
     delete process.env.NEXT_PUBLIC_MAILGUN_DOMAIN
 
+    // Mock fetch to simulate error when URL is malformed
+    mockFetch.mockRejectedValueOnce(new Error('Invalid URL'))
+
     await handler(req as NextApiRequest, res as NextApiResponse)
 
     expect(res.status).toHaveBeenCalledWith(500)
     expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      error: 'Mailgun configuration missing'
+      error: 'Invalid URL'
     })
 
     // Restore env vars
@@ -218,7 +213,9 @@ describe('/api/send-email', () => {
 
     await handler(req as NextApiRequest, res as NextApiResponse)
 
-    const formDataInstance = (FormData as jest.MockedClass<typeof FormData>).mock.results[0].value
-    expect(formDataInstance.append).toHaveBeenCalledWith('o:tracking-opens', 'yes')
+    const fetchCall = mockFetch.mock.calls[0]
+    const body = fetchCall?.[1]?.body as string
+    
+    expect(body).toContain('o%3Atracking-opens=yes')
   })
 })

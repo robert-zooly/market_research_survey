@@ -1,22 +1,15 @@
 // Mock Supabase client for testing
 const createMockChain = () => {
   const chain: any = {
-    insert: jest.fn().mockReturnThis(),
-    update: jest.fn().mockReturnThis(),
-    select: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    in: jest.fn().mockReturnThis(),
-    is: jest.fn().mockReturnThis(),
-    not: jest.fn().mockReturnThis(),
-    lte: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    single: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
+    data: null,
+    error: null
   }
   
-  // Make each method return the chain
-  Object.keys(chain).forEach(key => {
-    chain[key].mockReturnValue(chain)
+  // Define all chainable methods
+  const methods = ['insert', 'update', 'select', 'eq', 'in', 'is', 'not', 'lte', 'order', 'single', 'limit']
+  
+  methods.forEach(method => {
+    chain[method] = jest.fn(() => chain)
   })
   
   return chain
