@@ -1,0 +1,23 @@
+# Prevent all search engines from indexing this site
+User-agent: *
+Disallow: /
+Crawl-delay: 86400
+
+# Specifically block major search engines
+User-agent: Googlebot
+Disallow: /
+
+User-agent: Bingbot
+Disallow: /
+
+User-agent: Slurp
+Disallow: /
+
+User-agent: DuckDuckBot
+Disallow: /
+
+User-agent: Baiduspider
+Disallow: /
+
+User-agent: YandexBot
+Disallow: /
