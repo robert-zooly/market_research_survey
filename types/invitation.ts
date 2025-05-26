@@ -6,6 +6,7 @@ export interface InvitationBatch {
   sent_count: number
   opened_count: number
   completed_count: number
+  unsubscribed_count: number
   csv_data?: any
   created_at: string
 }
@@ -23,6 +24,7 @@ export interface SurveyInvitation {
   sent_at?: string
   opened_at?: string
   completed_at?: string
+  unsubscribed_at?: string
   reminder_count: number
   last_reminder_at?: string
   created_at: string
@@ -31,7 +33,7 @@ export interface SurveyInvitation {
 export interface EmailEvent {
   id: string
   invitation_id: string
-  event_type: 'sent' | 'opened' | 'clicked' | 'bounced' | 'complained'
+  event_type: 'sent' | 'opened' | 'clicked' | 'bounced' | 'complained' | 'unsubscribed'
   event_data?: Record<string, any>
   created_at: string
 }

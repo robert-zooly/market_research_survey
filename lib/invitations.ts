@@ -25,16 +25,32 @@ export async function createInvitations(
   surveyId: string,
   rows: CSVRow[]
 ): Promise<SurveyInvitation[]> {
-  const invitations = rows.map(row => ({
-    token: generateToken(),
-    batch_id: batchId,
-    survey_id: surveyId,
-    recipient_email: row.email.toLowerCase().trim(),
-    recipient_name: row.name?.trim(),
-    recipient_state: row.state?.trim(),
-    recipient_data: row,
-    timezone: getTimezoneFromState(row.state)
-  }))
+  // First, check which emails are unsubscribed
+  const emails = rows.map(row => row.email.toLowerCase().trim())
+  const { data: unsubscribedEmails } = await supabase
+    .from('unsubscribed_emails')
+    .select('email')
+    .in('email', emails)
+  
+  const unsubscribedSet = new Set(unsubscribedEmails?.map(u => u.email) || [])
+  
+  // Create invitations with unsubscribed_at set for unsubscribed emails
+  const invitations = rows.map(row => {
+    const email = row.email.toLowerCase().trim()
+    const isUnsubscribed = unsubscribedSet.has(email)
+    
+    return {
+      token: generateToken(),
+      batch_id: batchId,
+      survey_id: surveyId,
+      recipient_email: email,
+      recipient_name: row.name?.trim(),
+      recipient_state: row.state?.trim(),
+      recipient_data: row,
+      timezone: getTimezoneFromState(row.state),
+      ...(isUnsubscribed && { unsubscribed_at: new Date().toISOString() })
+    }
+  })
 
   const { data, error } = await supabase
     .from('survey_invitations')
@@ -42,6 +58,10 @@ export async function createInvitations(
     .select()
 
   if (error) throw error
+  
+  // Update batch statistics to reflect unsubscribed count
+  await supabase.rpc('update_batch_stats', { batch_uuid: batchId })
+  
   return data
 }
 
@@ -57,6 +77,16 @@ export async function getInvitationByToken(token: string): Promise<SurveyInvitat
 }
 
 export async function markInvitationOpened(token: string): Promise<void> {
+  // First get the invitation to find the batch_id
+  const { data: invitation } = await supabase
+    .from('survey_invitations')
+    .select('id, batch_id')
+    .eq('token', token)
+    .single()
+
+  if (!invitation) return
+
+  // Update opened_at only if not already set
   const { error } = await supabase
     .from('survey_invitations')
     .update({ opened_at: new Date().toISOString() })
@@ -64,15 +94,34 @@ export async function markInvitationOpened(token: string): Promise<void> {
     .is('opened_at', null)
 
   if (error) throw error
+
+  // Update batch statistics
+  if (invitation.batch_id) {
+    await supabase.rpc('update_batch_stats', { batch_uuid: invitation.batch_id })
+  }
 }
 
 export async function markInvitationSent(invitationId: string): Promise<void> {
+  // First get the invitation to find the batch_id
+  const { data: invitation } = await supabase
+    .from('survey_invitations')
+    .select('batch_id')
+    .eq('id', invitationId)
+    .single()
+
+  if (!invitation) return
+
   const { error } = await supabase
     .from('survey_invitations')
     .update({ sent_at: new Date().toISOString() })
     .eq('id', invitationId)
 
   if (error) throw error
+
+  // Update batch statistics
+  if (invitation.batch_id) {
+    await supabase.rpc('update_batch_stats', { batch_uuid: invitation.batch_id })
+  }
 }
 
 export async function getInvitationBatches(): Promise<InvitationBatch[]> {
