@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import { Survey } from '../../types/survey'
 import Papa from 'papaparse'
+import LogoutButton from '../../components/LogoutButton'
 
 export default function AdminDashboard() {
   const [surveys, setSurveys] = useState<Survey[]>([])
@@ -110,7 +111,10 @@ export default function AdminDashboard() {
 
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem' }}>
-      <h1>Admin Dashboard</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <h1 style={{ margin: 0 }}>Admin Dashboard</h1>
+        <LogoutButton />
+      </div>
       
       <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem' }}>
         <Link 
@@ -138,6 +142,19 @@ export default function AdminDashboard() {
           }}
         >
           Update Survey Template
+        </Link>
+        <Link 
+          href="/admin/invitations"
+          style={{ 
+            display: 'inline-block',
+            padding: '0.75rem 1.5rem',
+            backgroundColor: '#9333ea',
+            color: 'white',
+            textDecoration: 'none',
+            borderRadius: '4px'
+          }}
+        >
+          Manage Invitations
         </Link>
       </div>
 
