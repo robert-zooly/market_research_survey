@@ -69,10 +69,13 @@ export function scheduleByTimezone(
   invitations: SurveyInvitation[],
   sendTime: Date = new Date()
 ): ScheduledBatch[] {
+  // Filter out unsubscribed invitations
+  const activeInvitations = invitations.filter(inv => !inv.unsubscribed_at)
+  
   // Group by timezone
   const groups: Record<string, SurveyInvitation[]> = {}
   
-  invitations.forEach(inv => {
+  activeInvitations.forEach(inv => {
     const tz = inv.timezone || 'America/New_York'
     if (!groups[tz]) {
       groups[tz] = []

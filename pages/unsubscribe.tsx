@@ -14,9 +14,22 @@ export default function UnsubscribePage() {
 
   const handleUnsubscribe = async (invitationToken: string) => {
     try {
-      // TODO: Implement unsubscribe logic
-      // For now, just show success
-      setStatus('success')
+      const response = await fetch('/api/unsubscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: invitationToken }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setStatus('success')
+      } else {
+        console.error('Unsubscribe failed:', data.error)
+        setStatus('error')
+      }
     } catch (error) {
       console.error('Error unsubscribing:', error)
       setStatus('error')
@@ -66,7 +79,7 @@ export default function UnsubscribePage() {
 
         <div style={{ marginTop: '30px' }}>
           <a 
-            href="/"
+            href="https://getzooly.com"
             style={{
               color: '#1976d2',
               textDecoration: 'none'

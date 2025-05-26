@@ -233,11 +233,19 @@ export class EmailService {
     surveyUrl: string,
     reminderNumber: number = 0
   ): Promise<void> {
+    // Filter out unsubscribed users
+    const activeInvitations = invitations.filter(inv => !inv.unsubscribed_at)
+    
+    if (activeInvitations.length === 0) {
+      console.log('No active invitations to send (all unsubscribed)')
+      return
+    }
+    
     // Send in batches of 10 (reduced for API rate limits)
     const batchSize = 10
     
-    for (let i = 0; i < invitations.length; i += batchSize) {
-      const batch = invitations.slice(i, i + batchSize)
+    for (let i = 0; i < activeInvitations.length; i += batchSize) {
+      const batch = activeInvitations.slice(i, i + batchSize)
       
       await Promise.all(
         batch.map(async (invitation) => {
@@ -249,7 +257,7 @@ export class EmailService {
       )
       
       // Delay between batches to respect rate limits
-      if (i + batchSize < invitations.length) {
+      if (i + batchSize < activeInvitations.length) {
         await new Promise(resolve => setTimeout(resolve, 2000))
       }
     }
