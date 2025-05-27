@@ -1,5 +1,5 @@
 {
-  "title": "Zooly Labs: Hip Replacement Innovation Assessment",
+  "title": "Zooly Labs: Hip Replacement Innovation Survey",
   "description": "Transforming Orthopedic Surgery Through AI-Guided Precision",
   "logoPosition": "right",
   "pages": [
@@ -105,16 +105,49 @@
           ]
         },
         {
-          "type": "rating",
-          "name": "technology_satisfaction",
-          "title": "If yes to any above, how satisfied were you?",
-          "description": "1 = Very Dissatisfied, 5 = Very Satisfied",
-          "visibleIf": "{technologies_used} notempty and {technologies_used} notcontains 'None of the above'",
+          "type": "radiogroup",
+          "name": "robotic_assistance_experience",
+          "title": "What has been your experience with robotic assistance?",
+          "visibleIf": "{technologies_used} contains 'Robotic assistance'",
           "isRequired": true,
-          "rateMin": 1,
-          "rateMax": 5,
-          "minRateDescription": "Very Dissatisfied",
-          "maxRateDescription": "Very Satisfied"
+          "choices": [
+            "Very positive",
+            "Somewhat positive",
+            "Neutral",
+            "Somewhat negative",
+            "Very negative",
+            "No experience"
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "computer_navigation_experience",
+          "title": "What has been your experience with computer navigation?",
+          "visibleIf": "{technologies_used} contains 'Computer navigation'",
+          "isRequired": true,
+          "choices": [
+            "Very positive",
+            "Somewhat positive",
+            "Neutral",
+            "Somewhat negative",
+            "Very negative",
+            "No experience"
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "patient_specific_experience",
+          "title": "What has been your experience with patient-specific instrumentation?",
+          "visibleIf": "{technologies_used} contains 'Patient-specific instrumentation'",
+          "isRequired": true,
+          "choices": [
+            "Very positive",
+            "Somewhat positive",
+            "Neutral",
+            "Somewhat negative",
+            "Very negative",
+            "No experience"
+          ]
         },
         {
           "type": "comment",
@@ -152,12 +185,12 @@
         {
           "type": "html",
           "name": "research_info",
-          "html": "<p><strong>According to research by Kenney et al. (2019), the percentage of revision total hip arthroplasty failures are due to:</strong></p><ul><li>Aseptic loosening: 23%</li><li>Instability: 23%</li><li>Infection: 22%</li></ul><p>Many of these failures are directly linked to component positioning accuracy.</p>"
+          "html": "<p><strong>According to research by Kenney et al. (2019), the percentage of revision total hip arthroplasty failures are due to:</strong></p><ul><li>Aseptic loosening: 23%</li><li>Instability: 23%</li><li>Infection: 22%</li></ul><p>Component positioning accuracy is directly linked to many of these failures.</p>"
         },
         {
           "type": "radiogroup",
           "name": "addressing_value",
-          "title": "Would addressing this issue be valuable to your practice?",
+          "title": "How valuable would addressing this issue be to your practice?",
           "isRequired": true,
           "choices": [
             "Extremely valuable",
@@ -176,6 +209,24 @@
           "rateMax": 5,
           "minRateDescription": "Not at all important",
           "maxRateDescription": "Extremely important"
+        },
+        {
+          "type": "checkbox",
+          "name": "technology_challenges",
+          "title": "What challenges do you face when considering new technologies for your practice? (Select all that apply)",
+          "isRequired": true,
+          "choices": [
+            "Cost and budget constraints",
+            "Learning curve and training time",
+            "Integration with existing workflows",
+            "Reliability and consistency concerns",
+            "Limited evidence or outcomes data",
+            "Staff resistance to change",
+            "Capital equipment requirements",
+            "Other"
+          ],
+          "hasOther": true,
+          "otherText": "Please specify:"
         }
       ]
     },
@@ -187,13 +238,7 @@
           "type": "html",
           "name": "solution_intro",
           "html": "<h3>Introducing Zooly: Simple, Smart, Surgical Precision</h3><p>Our proprietary AI-driven sensor technology:</p><ul><li>Sets up in just 5 minutes</li><li>Provides accuracy and reliability for perfect component positioning</li><li>Works with your preferred implants and surgical approach</li><li>Reduces the need for pre-operative planning and imaging</li><li>Saves approximately $1,500 per case</li><li>Requires no capital equipment investment</li></ul><p><em>Unlike previous technologies, Zooly doesn't dictate your workflow—it enhances your expertise with precise, personalized guidance based on each patient's unique joint kinematics.</em></p>"
-        }
-      ]
-    },
-    {
-      "name": "value_assessment",
-      "title": "Value Assessment",
-      "elements": [
+        },
         {
           "type": "rating",
           "name": "technology_value",
@@ -282,12 +327,12 @@
     },
     {
       "name": "action_steps",
-      "title": "Action Steps",
+      "title": "Next Steps with Zooly",
       "elements": [
         {
           "type": "checkbox",
           "name": "next_steps",
-          "title": "I would like to: (Select all that apply)",
+          "title": "Would you like to: (Select all that apply)",
           "isRequired": true,
           "choices": [
             "Schedule a virtual demonstration",
