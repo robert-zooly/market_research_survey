@@ -46,6 +46,7 @@ export default function SurveyPage() {
   const [lastPageIndex, setLastPageIndex] = useState<number>(0)
   const [isInitialized, setIsInitialized] = useState(false)
   const [invitationData, setInvitationData] = useState<any>(null)
+  const [surveyReady, setSurveyReady] = useState(false)
   const surveyRef = useRef<Model | null>(null)
 
   useEffect(() => {
@@ -120,8 +121,12 @@ export default function SurveyPage() {
         survey.currentPageNo = pageIndex
       }
       
+      // Mark that we need to set up handlers in useEffect
+      (survey as any).__needsHandlers = true
+      
       // Only set loading to false after successful data fetch and survey creation
       setLoading(false)
+      setSurveyReady(true)
     } catch (error) {
       console.error('Error fetching survey:', error)
       // Keep loading true during redirect to prevent flash
@@ -131,6 +136,7 @@ export default function SurveyPage() {
   }
 
   const savePartialResponse = useCallback(async (data: any) => {
+    console.log('savePartialResponse called with data:', data)
     const contactData = {
       respondent_email: data.email || null,
       respondent_name: data.name || null,
@@ -139,6 +145,7 @@ export default function SurveyPage() {
 
     try {
       if (responseId) {
+        console.log('Updating existing response:', responseId)
         // Update existing response
         const { error } = await supabase
           .from('survey_responses')
@@ -150,7 +157,9 @@ export default function SurveyPage() {
           .eq('id', responseId)
 
         if (error) throw error
+        console.log('Successfully updated partial response')
       } else {
+        console.log('Creating new partial response')
         // Create new partial response
         const { data: newResponse, error } = await supabase
           .from('survey_responses')
@@ -165,6 +174,7 @@ export default function SurveyPage() {
 
         if (error) throw error
         if (newResponse) {
+          console.log('Created new response with ID:', newResponse.id)
           setResponseId(newResponse.id)
           safeLocalStorage.setItem(`survey_${id}_response_id`, newResponse.id)
         }
@@ -226,6 +236,12 @@ export default function SurveyPage() {
     if (!surveyData || !surveyRef.current) return
 
     const survey = surveyRef.current
+    
+    // Check if handlers need to be attached
+    if (!(survey as any).__needsHandlers) return
+    delete (survey as any).__needsHandlers
+    
+    console.log('Setting up survey event handlers')
 
     // Handle invitation data
     if (invitationData && !lastSavedData) {
@@ -310,6 +326,7 @@ export default function SurveyPage() {
       if (!isInitialized) return
       
       const currentData = sender.data
+      console.log('Survey value changed, saving to localStorage:', currentData)
       
       // Save to localStorage
       safeLocalStorage.setItem(`survey_${id}_data`, JSON.stringify(currentData))
@@ -321,6 +338,7 @@ export default function SurveyPage() {
       
       (survey.onValueChanged as any).timeoutId = setTimeout(() => {
         if (isInitialized) {
+          console.log('Auto-saving to database after 5 second delay')
           savePartialResponse(currentData)
         }
       }, 5000)
@@ -336,12 +354,14 @@ export default function SurveyPage() {
       
       const currentData = sender.data
       const currentPageIndex = sender.currentPageNo
+      console.log('Page changed to:', currentPageIndex, 'Saving progress...')
       
       safeLocalStorage.setItem(`survey_${id}_data`, JSON.stringify(currentData))
       safeLocalStorage.setItem(`survey_${id}_page`, currentPageIndex.toString())
       
       // Only save to database if we have actual data
       if (currentData && Object.keys(currentData).length > 0) {
+        console.log('Saving to database on page change')
         savePartialResponse(currentData)
       }
     })
@@ -349,8 +369,13 @@ export default function SurveyPage() {
     survey.onComplete.add(onComplete)
 
     // Mark as initialized after first render
-    setTimeout(() => setIsInitialized(true), 500)
-  }, [surveyData, id, savePartialResponse, onComplete, invitationData]) // Include stable dependencies
+    setTimeout(() => {
+      console.log('Marking survey as initialized')
+      setIsInitialized(true)
+    }, 500)
+    
+    console.log('Survey event handlers setup complete')
+  }, [surveyData, surveyReady, id, savePartialResponse, onComplete, invitationData]) // Include stable dependencies
 
   if (loading || !surveyData || !surveyRef.current) {
     return (
