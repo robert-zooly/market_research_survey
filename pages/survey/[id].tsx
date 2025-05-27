@@ -51,6 +51,8 @@ export default function SurveyPage() {
   const [surveyReady, setSurveyReady] = useState(false)
   const surveyRef = useRef<Model | null>(null)
   const isInitializedRef = useRef(false)
+  const responseIdRef = useRef<string | null>(null)
+  const isSavingRef = useRef(false)
 
   useEffect(() => {
     if (id) {
@@ -122,6 +124,7 @@ export default function SurveyPage() {
       }
       if (savedResponseId) {
         setResponseId(savedResponseId)
+        responseIdRef.current = savedResponseId
       }
       if (savedPageIndex) {
         const pageIndex = parseInt(savedPageIndex)
@@ -143,6 +146,15 @@ export default function SurveyPage() {
 
   const savePartialResponse = useCallback(async (data: any) => {
     console.log('savePartialResponse called with data:', data)
+    console.log('Current responseId:', responseIdRef.current)
+    
+    if (isSavingRef.current) {
+      console.log('Already saving, skipping concurrent save')
+      return
+    }
+    
+    isSavingRef.current = true
+    
     const contactData = {
       respondent_email: data.email || null,
       respondent_name: data.name || null,
@@ -150,8 +162,8 @@ export default function SurveyPage() {
     }
 
     try {
-      if (responseId) {
-        console.log('Updating existing response:', responseId)
+      if (responseIdRef.current) {
+        console.log('Updating existing response:', responseIdRef.current)
         // Update existing response
         const { error } = await supabase
           .from('survey_responses')
@@ -160,7 +172,7 @@ export default function SurveyPage() {
             ...contactData,
             is_complete: false
           })
-          .eq('id', responseId)
+          .eq('id', responseIdRef.current)
 
         if (error) throw error
         console.log('Successfully updated partial response')
@@ -182,13 +194,16 @@ export default function SurveyPage() {
         if (newResponse) {
           console.log('Created new response with ID:', newResponse.id)
           setResponseId(newResponse.id)
+          responseIdRef.current = newResponse.id
           safeLocalStorage.setItem(`survey_${id}_response_id`, newResponse.id)
         }
       }
     } catch (error) {
       console.error('Error saving partial response:', error)
+    } finally {
+      isSavingRef.current = false
     }
-  }, [id, responseId])
+  }, [id])
 
   const onComplete = useCallback(async (sender: Model) => {
     const results = sender.data
