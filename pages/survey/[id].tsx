@@ -37,8 +37,10 @@ const safeLocalStorage = {
 }
 
 export default function SurveyPage() {
+  console.log('SurveyPage component mounting')
   const router = useRouter()
   const { id, token } = router.query
+  console.log('Router query:', { id, token })
   const [surveyData, setSurveyData] = useState<SurveyType | null>(null)
   const [loading, setLoading] = useState(true)
   const [responseId, setResponseId] = useState<string | null>(null)
@@ -51,6 +53,7 @@ export default function SurveyPage() {
 
   useEffect(() => {
     if (id) {
+      console.log('Survey ID detected, fetching survey:', id)
       fetchSurvey(id as string)
     }
   }, [id])
@@ -85,6 +88,7 @@ export default function SurveyPage() {
 
   const fetchSurvey = async (surveyId: string) => {
     try {
+      console.log('Fetching survey from database:', surveyId)
       const { data, error } = await supabase
         .from('surveys')
         .select('*')
@@ -92,11 +96,14 @@ export default function SurveyPage() {
         .single()
 
       if (error) throw error
+      console.log('Survey data fetched:', data.name)
       setSurveyData(data)
       
       // Create survey model immediately
+      console.log('Creating survey model')
       const survey = new Model(data.json_schema)
       surveyRef.current = survey
+      console.log('Survey model created and stored in ref')
 
       // Load saved data from localStorage with Safari/iOS compatibility
       const savedData = safeLocalStorage.getItem(`survey_${surveyId}_data`)
@@ -123,10 +130,12 @@ export default function SurveyPage() {
       
       // Mark that we need to set up handlers in useEffect
       (survey as any).__needsHandlers = true
+      console.log('Survey marked as needing handlers')
       
       // Only set loading to false after successful data fetch and survey creation
       setLoading(false)
       setSurveyReady(true)
+      console.log('Survey ready state set to true')
     } catch (error) {
       console.error('Error fetching survey:', error)
       // Keep loading true during redirect to prevent flash
@@ -233,12 +242,20 @@ export default function SurveyPage() {
 
   // Set up survey behaviors and invitation data
   useEffect(() => {
-    if (!surveyData || !surveyRef.current) return
+    console.log('Event setup useEffect running. surveyData:', !!surveyData, 'surveyRef:', !!surveyRef.current, 'surveyReady:', surveyReady)
+    
+    if (!surveyData || !surveyRef.current) {
+      console.log('Exiting early - missing surveyData or surveyRef')
+      return
+    }
 
     const survey = surveyRef.current
     
     // Check if handlers need to be attached
-    if (!(survey as any).__needsHandlers) return
+    if (!(survey as any).__needsHandlers) {
+      console.log('Handlers already attached or not needed')
+      return
+    }
     delete (survey as any).__needsHandlers
     
     console.log('Setting up survey event handlers')
