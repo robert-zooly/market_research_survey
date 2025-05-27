@@ -37,6 +37,23 @@ export default async function handler(
     // Add user variables that will be returned in webhooks
     formData.append('v:invitation-id', invitation.id)
 
+    // Test mode - don't actually send email
+    if (process.env.NEXT_PUBLIC_TEST_MODE === 'true') {
+      console.log('📧 TEST MODE: Would send email', {
+        to: invitation.recipient_email,
+        subject: template.subject,
+        tags: ['survey-invitation'],
+        invitationId: invitation.id
+      })
+      
+      return res.status(200).json({ 
+        success: true, 
+        messageId: 'test-' + Date.now(),
+        test: true,
+        message: 'Test mode - email not sent' 
+      })
+    }
+    
     const response = await fetch(
       `https://api.mailgun.net/v3/${process.env.NEXT_PUBLIC_MAILGUN_DOMAIN}/messages`,
       {

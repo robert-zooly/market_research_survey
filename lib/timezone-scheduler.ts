@@ -8,33 +8,45 @@ interface ScheduledBatch {
   localTime: string
 }
 
-// Get the next occurrence of 9am in a given timezone
-export function getNext9amInTimezone(timezone: string, now: Date = new Date()): Date {
-  // Get current hour in the target timezone
-  const currentHour = parseInt(now.toLocaleString('en-US', { 
+// Get the next occurrence of target time in a given timezone
+export function getNextTargetTimeInTimezone(timezone: string, targetHour: number = 9, targetMinute: number = 0, now: Date = new Date()): Date {
+  // Get current time in the target timezone
+  const currentTimeStr = now.toLocaleString('en-US', { 
     timeZone: timezone, 
     hour: 'numeric', 
+    minute: 'numeric',
     hour12: false 
-  }))
+  })
+  const [hourStr, minuteStr] = currentTimeStr.split(':')
+  const currentHour = parseInt(hourStr)
+  const currentMinute = parseInt(minuteStr)
   
-  // Calculate how many hours until 9am
-  let hoursUntil9am: number
+  // Calculate how many minutes until target time
+  const currentTotalMinutes = currentHour * 60 + currentMinute
+  const targetTotalMinutes = targetHour * 60 + targetMinute
   
-  if (currentHour < 9) {
-    // It's before 9am today
-    hoursUntil9am = 9 - currentHour
+  let minutesUntilTarget: number
+  
+  if (currentTotalMinutes < targetTotalMinutes) {
+    // It's before target time today
+    minutesUntilTarget = targetTotalMinutes - currentTotalMinutes
   } else {
-    // It's after 9am today, so target tomorrow 9am
-    hoursUntil9am = (24 - currentHour) + 9
+    // It's after target time today, so target tomorrow
+    minutesUntilTarget = (24 * 60 - currentTotalMinutes) + targetTotalMinutes
   }
   
-  // Add the hours to current time
-  const targetTime = new Date(now.getTime() + (hoursUntil9am * 60 * 60 * 1000))
+  // Add the minutes to current time
+  const targetTime = new Date(now.getTime() + (minutesUntilTarget * 60 * 1000))
   
-  // Round to exact hour (9:00:00)
-  targetTime.setMinutes(0, 0, 0)
+  // Set to exact target time
+  targetTime.setSeconds(0, 0)
   
   return targetTime
+}
+
+// Backward compatibility - keep the old function name
+export function getNext9amInTimezone(timezone: string, now: Date = new Date()): Date {
+  return getNextTargetTimeInTimezone(timezone, 9, 0, now)
 }
 
 // Get timezone offset in hours from UTC
@@ -67,7 +79,9 @@ export function getTimezoneOffsetHours(timezone: string): number {
 // Group invitations by timezone and calculate send times
 export function scheduleByTimezone(
   invitations: SurveyInvitation[],
-  sendTime: Date = new Date()
+  sendTime: Date = new Date(),
+  targetHour: number = 9,
+  targetMinute: number = 0
 ): ScheduledBatch[] {
   // Filter out unsubscribed invitations
   const activeInvitations = invitations.filter(inv => !inv.unsubscribed_at)
@@ -85,7 +99,7 @@ export function scheduleByTimezone(
   
   // Create scheduled batches
   const batches: ScheduledBatch[] = Object.entries(groups).map(([timezone, invs]) => {
-    const scheduledTime = getNext9amInTimezone(timezone, sendTime)
+    const scheduledTime = getNextTargetTimeInTimezone(timezone, targetHour, targetMinute, sendTime)
     const offset = getTimezoneOffsetHours(timezone)
     
     return {

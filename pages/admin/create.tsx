@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import marketResearchSurvey from '../../surveys/market-research.json'
 import hipReplacementSurvey from '../../surveys/hip-replacement-assessment.json'
+import hipReplacementShortSurvey from '../../surveys/hip-replacement-assessment-short.json'
 
 export default function CreateSurvey() {
   const router = useRouter()
@@ -15,7 +16,8 @@ export default function CreateSurvey() {
 
   const templates = {
     'market-research': { name: 'Market Research Survey', data: marketResearchSurvey },
-    'hip-replacement': { name: 'Hip Replacement Innovation Assessment', data: hipReplacementSurvey }
+    'hip-replacement': { name: 'Hip Replacement Innovation Assessment (Full)', data: hipReplacementSurvey },
+    'hip-replacement-short': { name: 'Hip Replacement Innovation Assessment (2-min)', data: hipReplacementShortSurvey }
   }
 
   const handleTemplateChange = (templateKey: string) => {
@@ -93,7 +95,8 @@ export default function CreateSurvey() {
             }}
           >
             <option value="market-research">Market Research Survey</option>
-            <option value="hip-replacement">Hip Replacement Innovation Assessment</option>
+            <option value="hip-replacement">Hip Replacement Innovation Assessment (Full - 7 pages)</option>
+            <option value="hip-replacement-short">Hip Replacement Innovation Assessment (Short - 2 minutes)</option>
           </select>
         </div>
 

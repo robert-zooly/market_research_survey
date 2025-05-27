@@ -1,0 +1,115 @@
+{
+  "title": "Zooly Labs: Quick Hip Replacement Innovation Survey",
+  "description": "2-minute assessment to transform your practice",
+  "logoPosition": "right",
+  "pages": [
+    {
+      "name": "core_questions",
+      "elements": [
+        {
+          "type": "html",
+          "name": "intro_text",
+          "html": "<p style='font-weight: bold; margin-bottom: 1rem;'>Thank you for your time. Zooly Labs has developed AI-guided technology that addresses the #1 cause of hip replacement failures: component positioning.</p><p>Complete this 2-minute survey to receive your personalized practice impact report.</p>"
+        },
+        {
+          "type": "radiogroup",
+          "name": "hip_replacements_monthly",
+          "title": "How many hip replacements do you perform monthly?",
+          "isRequired": true,
+          "choices": [
+            "1-5",
+            "6-10",
+            "11-20",
+            "Over 21"
+          ]
+        },
+        {
+          "type": "matrix",
+          "name": "top_challenges",
+          "title": "What are your biggest challenges with component positioning?",
+          "description": "Rate from 1 (Very Challenging) to 5 (Not Challenging)",
+          "isRequired": true,
+          "columns": [
+            {
+              "value": 1,
+              "text": "1"
+            },
+            {
+              "value": 2,
+              "text": "2"
+            },
+            {
+              "value": 3,
+              "text": "3"
+            },
+            {
+              "value": 4,
+              "text": "4"
+            },
+            {
+              "value": 5,
+              "text": "5"
+            }
+          ],
+          "rows": [
+            {
+              "value": "cup_positioning",
+              "text": "Achieving optimal cup anteversion/inclination"
+            },
+            {
+              "value": "patient_variations",
+              "text": "Anatomical variations among patients"
+            },
+            {
+              "value": "minimally_invasive",
+              "text": "Accuracy in minimally invasive approaches"
+            }
+          ]
+        },
+        {
+          "type": "checkbox",
+          "name": "technologies_used",
+          "title": "Have you used any of these technologies?",
+          "isRequired": true,
+          "choices": [
+            "Robotic assistance",
+            "Computer navigation",
+            "Patient-specific instrumentation",
+            "None of the above"
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "financial_viability",
+          "title": "At $750 per case with $1,200 reimbursement via CPT 20985, would a 5-minute setup AI positioning system be financially viable?",
+          "isRequired": true,
+          "choices": [
+            "Yes, definitely",
+            "Likely",
+            "Unsure - need more info",
+            "Probably not",
+            "Definitely not"
+          ]
+        },
+        {
+          "type": "checkbox",
+          "name": "next_steps",
+          "title": "Would you like to: (Select all that apply)",
+          "isRequired": true,
+          "choices": [
+            "See a 5-minute virtual demo",
+            "Receive my personalized practice impact report",
+            "Join 100+ surgeons in our clinical evaluation",
+            "Not interested"
+          ]
+        }
+      ]
+    }
+  ],
+  "showProgressBar": "bottom",
+  "progressBarType": "questions",
+  "showQuestionNumbers": "off",
+  "completeText": "Get My Results",
+  "completedHtml": "<h3>Thank You!</h3><p>Your personalized practice impact report is being prepared.</p><p style='margin-top: 1rem;'><strong>You'll receive:</strong></p><ul style='margin: 0.5rem 0 1rem 1.5rem;'><li>Potential time savings analysis</li><li>Financial impact projection</li><li>Risk reduction metrics</li></ul><p>A Zooly specialist will contact you within 24 hours with your results.</p>",
+  "showCompletedPage": true
+}

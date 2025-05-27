@@ -124,6 +124,30 @@ export async function markInvitationSent(invitationId: string): Promise<void> {
   }
 }
 
+export async function markInvitationCompleted(token: string): Promise<void> {
+  // First get the invitation to find the batch_id
+  const { data: invitation } = await supabase
+    .from('survey_invitations')
+    .select('id, batch_id')
+    .eq('token', token)
+    .single()
+
+  if (!invitation) return
+
+  const { error } = await supabase
+    .from('survey_invitations')
+    .update({ completed_at: new Date().toISOString() })
+    .eq('token', token)
+    .is('completed_at', null)
+
+  if (error) throw error
+
+  // Update batch statistics
+  if (invitation.batch_id) {
+    await supabase.rpc('update_batch_stats', { batch_uuid: invitation.batch_id })
+  }
+}
+
 export async function getInvitationBatches(): Promise<InvitationBatch[]> {
   const { data, error } = await supabase
     .from('invitation_batches')

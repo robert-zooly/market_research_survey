@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase'
 import { Survey } from '../../types/survey'
 import Papa from 'papaparse'
 import LogoutButton from '../../components/LogoutButton'
+import TestModeIndicator from '../../components/TestModeIndicator'
 
 export default function AdminDashboard() {
   const [surveys, setSurveys] = useState<Survey[]>([])
@@ -110,11 +111,13 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <h1 style={{ margin: 0 }}>Admin Dashboard</h1>
-        <LogoutButton />
-      </div>
+    <>
+      <TestModeIndicator />
+      <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem', marginTop: process.env.NEXT_PUBLIC_TEST_MODE === 'true' ? '50px' : '0' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <h1 style={{ margin: 0 }}>Admin Dashboard</h1>
+          <LogoutButton />
+        </div>
       
       <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem' }}>
         <Link 
@@ -252,5 +255,6 @@ export default function AdminDashboard() {
         <Link href="/" style={{ color: '#0070f3' }}>← Back to Home</Link>
       </div>
     </div>
+    </>
   )
 }

@@ -43,7 +43,9 @@ export default function SurveyPage() {
   const [loading, setLoading] = useState(true)
   const [invitationData, setInvitationData] = useState<any>(null)
   const [surveyReady, setSurveyReady] = useState(false)
+  const [responseId, setResponseId] = useState<string | null>(null)
   const surveyRef = useRef<Model | null>(null)
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (id) {
@@ -94,6 +96,10 @@ export default function SurveyPage() {
       const survey = new Model(data.json_schema)
       surveyRef.current = survey
       
+      // Enable auto-save on value changes
+      survey.onValueChanged.add(handlePartialSave)
+      survey.onCurrentPageChanged.add(handlePartialSave)
+      
       // Only set loading to false after successful data fetch and survey creation
       setLoading(false)
       setSurveyReady(true)
@@ -105,34 +111,126 @@ export default function SurveyPage() {
     }
   }
 
+  const handlePartialSave = useCallback(async () => {
+    if (!surveyRef.current || !id) return
+    
+    // Clear existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current)
+    }
+    
+    // Debounce saves to avoid too many requests
+    saveTimeoutRef.current = setTimeout(async () => {
+      const survey = surveyRef.current
+      if (!survey) return
+      
+      const results = survey.data
+      const currentPage = survey.currentPageNo
+      const totalPages = survey.visiblePageCount
+      const completionPercentage = Math.round((currentPage / totalPages) * 100)
+      
+      const contactData = {
+        respondent_email: results.email || invitationData?.email || null,
+        respondent_name: results.name || invitationData?.name || null,
+        respondent_address: results.address || null
+      }
+      
+      try {
+        if (responseId) {
+          // Update existing response
+          const { error } = await supabase
+            .from('survey_responses')
+            .update({
+              response_data: results,
+              ...contactData,
+              last_page: currentPage,
+              completion_percentage: completionPercentage,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', responseId)
+            
+          if (error) throw error
+        } else {
+          // Create new partial response
+          const { data, error } = await supabase
+            .from('survey_responses')
+            .insert({
+              survey_id: id,
+              response_data: results,
+              ...contactData,
+              is_complete: false,
+              last_page: currentPage,
+              completion_percentage: completionPercentage,
+              invitation_token: token || null
+            })
+            .select('id')
+            .single()
+            
+          if (error) throw error
+          if (data) setResponseId(data.id)
+        }
+      } catch (error) {
+        console.error('Error saving partial response:', error)
+      }
+    }, 2000) // Save after 2 seconds of inactivity
+  }, [id, responseId, token, invitationData])
 
   const onComplete = useCallback(async (sender: Model) => {
     const results = sender.data
     const contactData = {
-      respondent_email: results.email || null,
-      respondent_name: results.name || null,
+      respondent_email: results.email || invitationData?.email || null,
+      respondent_name: results.name || invitationData?.name || null,
       respondent_address: results.address || null
     }
 
     try {
-      // Create complete response
-      const { error } = await supabase
-        .from('survey_responses')
-        .insert({
-          survey_id: id,
-          response_data: results,
-          ...contactData,
-          is_complete: true
-        })
+      if (responseId) {
+        // Update existing response to complete
+        const { error } = await supabase
+          .from('survey_responses')
+          .update({
+            response_data: results,
+            ...contactData,
+            is_complete: true,
+            completion_percentage: 100,
+            completed_at: new Date().toISOString()
+          })
+          .eq('id', responseId)
+          
+        if (error) throw error
+      } else {
+        // Create new complete response
+        const { error } = await supabase
+          .from('survey_responses')
+          .insert({
+            survey_id: id,
+            response_data: results,
+            ...contactData,
+            is_complete: true,
+            completion_percentage: 100,
+            invitation_token: token || null
+          })
 
-      if (error) throw error
+        if (error) throw error
+      }
+      
+      // Clear save timeout
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+      
+      // Mark invitation as completed if present
+      if (token && typeof token === 'string') {
+        const { markInvitationCompleted } = await import('../../lib/invitations')
+        await markInvitationCompleted(token)
+      }
       
       // Don't redirect - let the survey show its completion page
     } catch (error) {
       console.error('Error saving response:', error)
       alert('Failed to save response. Please try again.')
     }
-  }, [id])
+  }, [id, responseId, token, invitationData])
 
   // Set up survey behaviors and invitation data
   useEffect(() => {

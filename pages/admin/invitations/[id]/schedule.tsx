@@ -72,8 +72,8 @@ export default function ScheduleSendPage() {
       
       setSurvey(surveyData)
 
-      // Schedule batches
-      const scheduled = scheduleByTimezone(pending)
+      // Schedule batches for 5:30 AM
+      const scheduled = scheduleByTimezone(pending, new Date(), 5, 30)
       setScheduledBatches(scheduled)
     } catch (error) {
       console.error('Error loading batch:', error)
@@ -157,14 +157,14 @@ export default function ScheduleSendPage() {
       }}>
         <h3 style={{ margin: '0 0 10px 0' }}>Timezone Scheduling</h3>
         <p style={{ margin: '0 0 10px 0' }}>
-          Emails will be sent at <strong>9:00 AM local time</strong> in each timezone.
+          Emails will be sent at <strong>5:30 AM local time</strong> in each timezone.
         </p>
         <p style={{ margin: '0 0 10px 0' }}>
           <strong>{totalPending} emails</strong> scheduled across {scheduledBatches.length} timezones
         </p>
         {scheduledBatches.length > 0 && scheduledBatches[0].scheduledTime.getDate() !== now.getDate() && (
           <p style={{ margin: 0, color: '#d32f2f' }}>
-            ⚠️ <strong>Note:</strong> Since it's past 9 AM in all timezones, emails are scheduled for tomorrow.
+            ⚠️ <strong>Note:</strong> Since it's past 5:30 AM in all timezones, emails are scheduled for tomorrow.
           </p>
         )}
       </div>
@@ -231,7 +231,7 @@ export default function ScheduleSendPage() {
                   })}
                 </td>
                 <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #eee' }}>
-                  9:00 AM
+                  5:30 AM
                 </td>
                 <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #eee' }}>
                   {isSent ? '✓ Sent' : getTimeUntilSend(batch.scheduledTime, now)}
