@@ -69,21 +69,60 @@
           "description": "Rate from 1 (Challenging) to 5 (Trivial)",
           "isRequired": true,
           "columns": [
-            { "value": 1, "text": "1 - Very Challenging" },
-            { "value": 2, "text": "2" },
-            { "value": 3, "text": "3" },
-            { "value": 4, "text": "4" },
-            { "value": 5, "text": "5 - Trivial" }
+            {
+              "value": 1,
+              "text": "1 - Very Challenging"
+            },
+            {
+              "value": 2,
+              "text": "2"
+            },
+            {
+              "value": 3,
+              "text": "3"
+            },
+            {
+              "value": 4,
+              "text": "4"
+            },
+            {
+              "value": 5,
+              "text": "5 - Trivial"
+            }
           ],
           "rows": [
-            { "value": "cup_anteversion", "text": "Achieving optimal cup anteversion/inclination" },
-            { "value": "anatomical_variations", "text": "Anatomical variations among patients" },
-            { "value": "minimally_invasive", "text": "Accuracy in minimally invasive approaches" },
-            { "value": "limited_visibility", "text": "Limited intraoperative visibility" },
-            { "value": "soft_tissue", "text": "Soft-tissue balancing and stability management" },
-            { "value": "bone_quality", "text": "Addressing unexpected bone quality/defects" },
-            { "value": "obesity_challenges", "text": "Overcoming obesity or muscular challenges" },
-            { "value": "component_stability", "text": "Component stability in complex cases" }
+            {
+              "value": "cup_anteversion",
+              "text": "Achieving optimal cup anteversion/inclination"
+            },
+            {
+              "value": "anatomical_variations",
+              "text": "Anatomical variations among patients"
+            },
+            {
+              "value": "minimally_invasive",
+              "text": "Accuracy in minimally invasive approaches"
+            },
+            {
+              "value": "limited_visibility",
+              "text": "Limited intraoperative visibility"
+            },
+            {
+              "value": "soft_tissue",
+              "text": "Soft-tissue balancing and stability management"
+            },
+            {
+              "value": "bone_quality",
+              "text": "Addressing unexpected bone quality/defects"
+            },
+            {
+              "value": "obesity_challenges",
+              "text": "Overcoming obesity or muscular challenges"
+            },
+            {
+              "value": "component_stability",
+              "text": "Component stability in complex cases"
+            }
           ]
         },
         {
@@ -222,11 +261,10 @@
             "Reliability and consistency concerns",
             "Limited evidence or outcomes data",
             "Staff resistance to change",
-            "Capital equipment requirements",
-            "Other"
+            "Capital equipment requirements"
           ],
           "hasOther": true,
-          "otherText": "Please specify:"
+          "otherText": "Other (please specify)"
         }
       ]
     },
