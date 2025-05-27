@@ -7,6 +7,7 @@ export interface InvitationBatch {
   opened_count: number
   completed_count: number
   unsubscribed_count: number
+  failed_count?: number
   csv_data?: any
   created_at: string
 }
@@ -25,6 +26,8 @@ export interface SurveyInvitation {
   opened_at?: string
   completed_at?: string
   unsubscribed_at?: string
+  failed_at?: string
+  failure_reason?: string
   reminder_count: number
   last_reminder_at?: string
   created_at: string
