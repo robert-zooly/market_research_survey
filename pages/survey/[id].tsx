@@ -50,6 +50,7 @@ export default function SurveyPage() {
   const [invitationData, setInvitationData] = useState<any>(null)
   const [surveyReady, setSurveyReady] = useState(false)
   const surveyRef = useRef<Model | null>(null)
+  const isInitializedRef = useRef(false)
 
   useEffect(() => {
     if (id) {
@@ -336,7 +337,7 @@ export default function SurveyPage() {
     // Auto-save on value change
     const valueChangeHandler = (sender: any, options: any) => {
       // Skip auto-save during initialization
-      if (!isInitialized) {
+      if (!isInitializedRef.current) {
         console.log('Skipping auto-save - not initialized yet')
         return
       }
@@ -353,7 +354,7 @@ export default function SurveyPage() {
       }
       
       (survey.onValueChanged as any).timeoutId = setTimeout(() => {
-        if (isInitialized) {
+        if (isInitializedRef.current) {
           console.log('Auto-saving to database after 5 second delay')
           savePartialResponse(currentData)
         }
@@ -366,8 +367,8 @@ export default function SurveyPage() {
     // Save on page change
     survey.onCurrentPageChanged.add((sender) => {
       // Skip during initial page setup
-      if (!isInitialized) {
-        setIsInitialized(true)
+      if (!isInitializedRef.current) {
+        console.log('Page changed during initialization, skipping save')
         return
       }
       
@@ -391,11 +392,13 @@ export default function SurveyPage() {
     setTimeout(() => {
       console.log('Marking survey as initialized')
       setIsInitialized(true)
+      isInitializedRef.current = true
       
       // Test if handlers are working
       console.log('Testing handlers after initialization')
       console.log('onValueChanged has', survey.onValueChanged.length, 'handlers')
       console.log('onCurrentPageChanged has', survey.onCurrentPageChanged.length, 'handlers')
+      console.log('isInitializedRef.current:', isInitializedRef.current)
     }, 500)
     
     console.log('Survey event handlers setup complete')
