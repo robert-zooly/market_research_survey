@@ -251,6 +251,12 @@ export default function BatchDetailsPage() {
           <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', color: '#666' }}>Completed</h3>
           <p style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{batch.completed_count}</p>
         </div>
+        {batch.failed_count !== undefined && batch.failed_count > 0 && (
+          <div style={{ backgroundColor: '#ffebee', padding: '20px', borderRadius: '8px' }}>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', color: '#666' }}>Failed</h3>
+            <p style={{ margin: 0, fontSize: '32px', fontWeight: 'bold', color: '#d32f2f' }}>{batch.failed_count}</p>
+          </div>
+        )}
         <div style={{ backgroundColor: '#f3e5f5', padding: '20px', borderRadius: '8px' }}>
           <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', color: '#666' }}>Completion Rate</h3>
           <p style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
@@ -389,7 +395,13 @@ export default function BatchDetailsPage() {
                   <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{invitation.recipient_state || '-'}</td>
                   <td style={{ padding: '8px', borderBottom: '1px solid #eee', fontSize: '12px' }}>{invitation.timezone}</td>
                   <td style={{ padding: '8px', textAlign: 'center', borderBottom: '1px solid #eee' }}>
-                    {invitation.sent_at ? '✓' : '-'}
+                    {invitation.failed_at ? (
+                      <span style={{ color: 'red' }} title={invitation.failure_reason || 'Failed'}>❌</span>
+                    ) : invitation.sent_at ? (
+                      '✓'
+                    ) : (
+                      '-'
+                    )}
                   </td>
                   <td style={{ padding: '8px', textAlign: 'center', borderBottom: '1px solid #eee' }}>
                     {invitation.opened_at ? '✓' : '-'}

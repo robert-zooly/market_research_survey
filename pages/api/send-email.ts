@@ -34,6 +34,8 @@ export default async function handler(
     formData.append('o:tracking-opens', 'yes')
     formData.append('o:tag', 'survey-invitation')
     formData.append('h:X-Invitation-ID', invitation.id)
+    // Add user variables that will be returned in webhooks
+    formData.append('v:invitation-id', invitation.id)
 
     const response = await fetch(
       `https://api.mailgun.net/v3/${process.env.NEXT_PUBLIC_MAILGUN_DOMAIN}/messages`,
