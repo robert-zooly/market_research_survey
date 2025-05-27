@@ -128,10 +128,6 @@ export default function SurveyPage() {
         survey.currentPageNo = pageIndex
       }
       
-      // Mark that we need to set up handlers in useEffect
-      (survey as any).__needsHandlers = true
-      console.log('Survey marked as needing handlers')
-      
       // Only set loading to false after successful data fetch and survey creation
       setLoading(false)
       setSurveyReady(true)
@@ -251,12 +247,12 @@ export default function SurveyPage() {
 
     const survey = surveyRef.current
     
-    // Check if handlers need to be attached
-    if (!(survey as any).__needsHandlers) {
-      console.log('Handlers already attached or not needed')
+    // Check if handlers are already attached
+    if ((survey as any).__handlersAttached) {
+      console.log('Handlers already attached')
       return
     }
-    delete (survey as any).__needsHandlers
+    (survey as any).__handlersAttached = true
     
     console.log('Setting up survey event handlers')
 
@@ -338,9 +334,12 @@ export default function SurveyPage() {
     })
 
     // Auto-save on value change
-    survey.onValueChanged.add((sender, options) => {
+    const valueChangeHandler = (sender: any, options: any) => {
       // Skip auto-save during initialization
-      if (!isInitialized) return
+      if (!isInitialized) {
+        console.log('Skipping auto-save - not initialized yet')
+        return
+      }
       
       const currentData = sender.data
       console.log('Survey value changed, saving to localStorage:', currentData)
@@ -359,7 +358,10 @@ export default function SurveyPage() {
           savePartialResponse(currentData)
         }
       }, 5000)
-    })
+    }
+    
+    survey.onValueChanged.add(valueChangeHandler)
+    console.log('Added value change handler. Total handlers:', survey.onValueChanged.length)
 
     // Save on page change
     survey.onCurrentPageChanged.add((sender) => {
@@ -389,6 +391,11 @@ export default function SurveyPage() {
     setTimeout(() => {
       console.log('Marking survey as initialized')
       setIsInitialized(true)
+      
+      // Test if handlers are working
+      console.log('Testing handlers after initialization')
+      console.log('onValueChanged has', survey.onValueChanged.length, 'handlers')
+      console.log('onCurrentPageChanged has', survey.onCurrentPageChanged.length, 'handlers')
     }, 500)
     
     console.log('Survey event handlers setup complete')
