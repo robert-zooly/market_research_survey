@@ -154,16 +154,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .single()
 
         if (invitation) {
-          // Add to unsubscribed list
-          await supabase
+          // Check if already unsubscribed
+          const { data: existing } = await supabase
             .from('unsubscribed_emails')
-            .insert({
-              email: invitation.recipient_email,
-              source: 'spam_complaint',
-              unsubscribed_at: new Date(eventTimestamp * 1000).toISOString()
-            })
-            .onConflict('email')
-            .merge()
+            .select('email')
+            .eq('email', invitation.recipient_email)
+            .single()
+
+          if (!existing) {
+            // Add to unsubscribed list
+            await supabase
+              .from('unsubscribed_emails')
+              .insert({
+                email: invitation.recipient_email,
+                source: 'spam_complaint',
+                unsubscribed_at: new Date(eventTimestamp * 1000).toISOString()
+              })
+          }
         }
         break
 
